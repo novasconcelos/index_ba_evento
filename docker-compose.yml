@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: eventos_fieb_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fieb
+      POSTGRES_PASSWORD: fieb
+      POSTGRES_DB: eventos_fieb
+    ports:
+      - "5432:5432"
+    volumes:
+      - eventos_fieb_pgdata:/var/lib/postgresql/data
+
+volumes:
+  eventos_fieb_pgdata:

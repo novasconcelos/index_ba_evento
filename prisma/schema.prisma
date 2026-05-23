@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Observação: usamos colunas String para os "enums" (Role, StandStatus,
+// OrderStatus, etc.) porque o banco local é SQLite. Os valores válidos estão
+// definidos em lib/enums.ts. Ao migrar para Postgres, as colunas permanecem
+// compatíveis (ou podem virar enums nativos).
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("STAFF")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Event {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  year      Int
+  startDate   DateTime?
+  endDate     DateTime?
+  mapSvg      String? // markup SVG da planta do evento (modo vetorial)
+  mapImageUrl String? // imagem de fundo do mapa (modo imagem + hotspots)
+  active      Boolean   @default(true)
+  stands    Stand[]
+  orders    Order[]
+  goals     Goal[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Stand {
+  id            String      @id @default(cuid())
+  eventId       String
+  event         Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  code          String
+  segment       String?
+  sector        String? // ASA A / B
+  sizeM2        Int?
+  priceCents    Int         @default(0)
+  status        String      @default("AVAILABLE")
+  svgShapeId    String? // id da forma no SVG do evento
+  hotspot       String? // área clicável sobre a imagem: JSON {x,y,w,h} normalizado (0..1)
+  positionLabel String?
+  orderItems    OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([eventId, code])
+}
+
+model Exhibitor {
+  id           String   @id @default(cuid())
+  nomeFantasia String
+  razaoSocial  String?
+  cnpj         String?
+  contato      String?
+  telefone     String?
+  email        String
+  segment      String?
+  captador     String?
+  indicacao    String?
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Order {
+  id              String                @id @default(cuid())
+  eventId         String
+  event           Event                 @relation(fields: [eventId], references: [id])
+  exhibitorId     String?
+  exhibitor       Exhibitor?            @relation(fields: [exhibitorId], references: [id])
+  status          String                @default("CART")
+  totalCents      Int                   @default(0)
+  holdExpiresAt   DateTime?
+  trackingToken   String                @unique @default(cuid())
+  notes           String?
+  items           OrderItem[]
+  techResponsible TechnicalResponsible?
+  brandAsset      BrandAsset?
+  contract        Contract?
+  payment         Payment?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  order      Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  standId    String
+  stand      Stand  @relation(fields: [standId], references: [id])
+  code       String
+  priceCents Int
+
+  @@unique([orderId, standId])
+}
+
+model TechnicalResponsible {
+  id       String  @id @default(cuid())
+  orderId  String  @unique
+  order    Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  name     String
+  document String?
+  email    String?
+  phone    String?
+}
+
+model BrandAsset {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  filename  String
+  path      String
+  mimeType  String
+  sizeBytes Int
+  createdAt DateTime @default(now())
+}
+
+model Contract {
+  id          String    @id @default(cuid())
+  orderId     String    @unique
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  html        String?
+  status      String    @default("DRAFT")
+  provider    String    @default("manual")
+  providerRef String?
+  signUrl     String?
+  signedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Payment {
+  id          String    @id @default(cuid())
+  orderId     String    @unique
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider    String    @default("manual")
+  providerRef String?
+  paymentUrl  String?
+  method      String?
+  amountCents Int       @default(0)
+  status      String    @default("PENDING")
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model MagicLinkToken {
+  id          String    @id @default(cuid())
+  token       String    @unique @default(cuid())
+  email       String
+  exhibitorId String?
+  purpose     String    @default("invite")
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  eventId     String?
+  event       Event?    @relation(fields: [eventId], references: [id])
+  title       String
+  metric      String
+  targetValue Int
+  segment     String?
+  periodStart DateTime?
+  periodEnd   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

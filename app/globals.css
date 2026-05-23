@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Identidade INDEX */
+  --color-brand-navy: #2d2a8c;
+  --color-brand-navy-light: #3d3aac;
+  --color-brand-indigo-dark: #201d6b;
+  --color-brand-green: #58bd6a;
+  --color-brand-green-light: #a6d957;
+  --color-brand-teal: #34b39a;
+  --color-brand-teal-dark: #238f7c;
+  --color-brand-lime: #c6e84d;
+  --color-brand-lime-dark: #a9cf2e;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #f6f7f9;
+  --color-foreground: #14151a;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Gradiente de marca INDEX (verde -> teal) */
+.bg-index-gradient {
+  background-image: linear-gradient(120deg, #a6d957 0%, #58bd6a 45%, #34b39a 100%);
+}
+
+/* Estilos auxiliares para impressão do contrato */
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }

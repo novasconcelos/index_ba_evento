@@ -39,3 +39,49 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ── banco de dados SQLite (dev local) ─────────────────────────
+prisma/*.db
+prisma/*.db-journal
+prisma/*.db-shm
+prisma/*.db-wal
+*.sqlite
+*.sqlite3
+
+# ── uploads locais (StorageProvider local) ────────────────────
+# imagens, logos e arquivos enviados pelos expositores
+storage/
+
+# ── assets de mapa copiados para public (arquivos pesados) ────
+public/mapa-*.jpg
+public/mapa-*.jpeg
+public/mapa-*.png
+public/mapa-*.webp
+
+# ── variáveis de ambiente com segredos ────────────────────────
+# .env genérico já coberto acima; entradas específicas por ambiente:
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# ── IDE / editores ────────────────────────────────────────────
+.vscode/settings.json
+.vscode/*.code-workspace
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# ── Claude Code — dados locais de sessão ─────────────────────
+# histórico de chat e planos gerados automaticamente
+.claude/plans/
+.claude/memory/
+
+# ── cache e análise de build ──────────────────────────────────
+.turbo/
+analyze/

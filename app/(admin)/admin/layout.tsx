@@ -7,6 +7,7 @@ import {
   Building2,
   Target,
   Mail,
+  Settings,
   LogOut,
 } from "lucide-react";
 import { auth, signOut } from "@/auth";
@@ -20,6 +21,7 @@ const NAV = [
   { href: "/admin/expositores", label: "Expositores", icon: Building2 },
   { href: "/admin/metas", label: "Metas", icon: Target },
   { href: "/admin/convites", label: "Convites", icon: Mail },
+  { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 export default async function AdminLayout({

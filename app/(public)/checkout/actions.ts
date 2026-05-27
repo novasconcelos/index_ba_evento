@@ -35,6 +35,21 @@ export type CreateOrderResult =
   | { ok: true; token: string }
   | { ok: false; error: string };
 
+/**
+ * Recebe uma lista de IDs do carrinho (localStorage) e devolve apenas os que
+ * ainda existem no banco E estão disponíveis. Usado para limpar itens obsoletos
+ * antes de exibir o formulário de checkout (ex.: após re-seed).
+ */
+export async function validateStandIds(ids: string[]): Promise<string[]> {
+  if (!ids.length) return [];
+  const event = await getActiveEventOrThrow();
+  const rows = await prisma.stand.findMany({
+    where: { id: { in: ids }, eventId: event.id, status: "AVAILABLE" },
+    select: { id: true },
+  });
+  return rows.map((r) => r.id);
+}
+
 export async function createOrder(
   formData: FormData,
 ): Promise<CreateOrderResult> {
@@ -67,7 +82,11 @@ export async function createOrder(
     where: { id: { in: data.standIds }, eventId: event.id },
   });
   if (stands.length !== data.standIds.length) {
-    return { ok: false, error: "Algum stand selecionado não foi encontrado." };
+    return {
+      ok: false,
+      error:
+        "Algum stand selecionado não foi encontrado. O mapa pode ter sido atualizado — por favor, volte ao mapa e selecione os stands novamente.",
+    };
   }
   const indisponiveis = stands.filter((s) => s.status !== "AVAILABLE");
   if (indisponiveis.length > 0) {

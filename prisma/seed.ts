@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import type { OrderStatus, StandStatus } from "../lib/enums";
-import { buildSampleMap } from "../lib/sample-map";
+import { buildSampleMap, SAMPLE_TIPOS, SAMPLE_ASAS } from "../lib/sample-map";
 
 const prisma = new PrismaClient();
 
@@ -134,6 +134,7 @@ async function main() {
   await prisma.magicLinkToken.deleteMany();
   await prisma.goal.deleteMany();
   await prisma.stand.deleteMany();
+  await prisma.standOption.deleteMany();
   await prisma.exhibitor.deleteMany();
   await prisma.event.deleteMany();
   await prisma.adminUser.deleteMany();
@@ -159,6 +160,7 @@ async function main() {
       startDate: new Date("2027-05-05"),
       endDate: new Date("2027-05-07"),
       mapSvg: svg,
+      mapImageUrl: "/mapa-index.jpg", // mapa 3D real em public/ (ver .gitignore)
       active: true,
     },
   });
@@ -166,6 +168,19 @@ async function main() {
   console.log(`Criando ${stands.length} stands...`);
   await prisma.stand.createMany({
     data: stands.map((s) => ({ ...s, eventId: event.id })),
+  });
+
+  console.log("Criando listas configuráveis (Tipo, ASA, Localização)...");
+  await prisma.standOption.createMany({
+    data: [
+      ...SAMPLE_TIPOS.map((value, i) => ({ kind: "TIPO", value, sortOrder: i })),
+      ...SAMPLE_ASAS.map((value, i) => ({ kind: "ASA", value, sortOrder: i })),
+      ...stands.map((s, i) => ({
+        kind: "LOCALIZACAO",
+        value: s.positionLabel,
+        sortOrder: i,
+      })),
+    ],
   });
 
   console.log("Criando expositores e pedidos de exemplo...");

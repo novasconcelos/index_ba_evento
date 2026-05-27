@@ -8,7 +8,7 @@ import { formatBRL } from "@/lib/utils";
 interface StandLike {
   id: string;
   code: string;
-  segment: string | null;
+  tipo: string | null;
   sector: string | null;
   sizeM2: number | null;
   priceCents: number;
@@ -17,12 +17,26 @@ interface StandLike {
   positionLabel: string | null;
 }
 
+// Renderiza um <option> "vazio" + a opção atual mesmo que não esteja na lista,
+// garantindo que valores antigos não desapareçam silenciosamente.
+function optionList(options: string[], current: string | null): string[] {
+  const set = new Set(options);
+  if (current && !set.has(current)) return [current, ...options];
+  return options;
+}
+
 export function StandForm({
   action,
   stand,
+  tipos = [],
+  asas = [],
+  localizacoes = [],
 }: {
   action: (formData: FormData) => void;
   stand?: StandLike;
+  tipos?: string[];
+  asas?: string[];
+  localizacoes?: string[];
 }) {
   return (
     <form action={action} className="max-w-xl space-y-4">
@@ -42,16 +56,41 @@ export function StandForm({
           />
         </div>
         <div>
-          <Label htmlFor="segment">Segmento</Label>
-          <Input
-            id="segment"
-            name="segment"
-            defaultValue={stand?.segment ?? ""}
-          />
+          <Label htmlFor="tipo">Tipo (Estande ou Piso)</Label>
+          <Select id="tipo" name="tipo" defaultValue={stand?.tipo ?? ""}>
+            <option value="">—</option>
+            {optionList(tipos, stand?.tipo ?? null).map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </Select>
         </div>
         <div>
-          <Label htmlFor="sector">Setor</Label>
-          <Input id="sector" name="sector" defaultValue={stand?.sector ?? ""} />
+          <Label htmlFor="sector">ASA</Label>
+          <Select id="sector" name="sector" defaultValue={stand?.sector ?? ""}>
+            <option value="">—</option>
+            {optionList(asas, stand?.sector ?? null).map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="positionLabel">Localização</Label>
+          <Select
+            id="positionLabel"
+            name="positionLabel"
+            defaultValue={stand?.positionLabel ?? ""}
+          >
+            <option value="">—</option>
+            {optionList(localizacoes, stand?.positionLabel ?? null).map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </Select>
         </div>
         <div>
           <Label htmlFor="sizeM2">Metragem (m²)</Label>
@@ -84,14 +123,6 @@ export function StandForm({
               </option>
             ))}
           </Select>
-        </div>
-        <div>
-          <Label htmlFor="positionLabel">Localização</Label>
-          <Input
-            id="positionLabel"
-            name="positionLabel"
-            defaultValue={stand?.positionLabel ?? ""}
-          />
         </div>
       </div>
       <div className="flex gap-3">

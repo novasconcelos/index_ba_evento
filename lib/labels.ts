@@ -4,7 +4,21 @@ import type {
   Captador,
   ContractStatus,
   PaymentStatus,
+  StandOptionKind,
 } from "@/lib/enums";
+
+export const standOptionKindLabel: Record<StandOptionKind, string> = {
+  TIPO: "Tipo (Estande/Piso)",
+  ASA: "ASA",
+  LOCALIZACAO: "Localização",
+};
+
+// Forma singular para textos de formulário ("Adicionar novo {singular}").
+export const standOptionKindSingular: Record<StandOptionKind, string> = {
+  TIPO: "tipo",
+  ASA: "ASA",
+  LOCALIZACAO: "localização",
+};
 
 export const standStatusLabel: Record<StandStatus, string> = {
   AVAILABLE: "Disponível",

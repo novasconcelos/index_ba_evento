@@ -27,7 +27,9 @@ export function CartSummary({ showCheckout = true }: { showCheckout?: boolean })
               <div>
                 <p className="font-medium text-gray-900">Stand {item.code}</p>
                 <p className="text-xs text-gray-500">
-                  {item.segment}
+                  {[item.tipo, item.sector ? `ASA ${item.sector}` : null]
+                    .filter(Boolean)
+                    .join(" • ")}
                   {item.sizeM2 ? ` • ${item.sizeM2} m²` : ""}
                 </p>
               </div>

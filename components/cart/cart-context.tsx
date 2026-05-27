@@ -8,7 +8,9 @@ export interface CartItem {
   priceCents: number;
   sizeM2: number | null;
   segment: string | null;
-  sector: string | null;
+  tipo?: string | null;
+  sector: string | null; // ASA
+  positionLabel?: string | null; // Localização
 }
 
 interface CartContextValue {

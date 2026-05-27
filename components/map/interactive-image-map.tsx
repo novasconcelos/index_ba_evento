@@ -34,6 +34,7 @@ const statusBg: Record<StandStatus, string> = {
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 const ZOOM_STEP = 0.5;
+const ALL = "__ALL__";
 
 /* ─── componente principal ────────────────────────────────────── */
 export function InteractiveImageMap({
@@ -53,19 +54,33 @@ export function InteractiveImageMap({
 
   /* hover / seleção no info-panel */
   const [hovered, setHovered] = React.useState<string | null>(null);
-  const [focused, setFocused] = React.useState<string | null>(null); // destaque do painel
+  const [focused, setFocused] = React.useState<string | null>(null);
+
+  /* filtro por Tipo */
+  const [tipoFilter, setTipoFilter] = React.useState<string>(ALL);
 
   const selectedIds = React.useMemo(() => new Set(items.map((i) => i.id)), [items]);
+
+  const tipos = React.useMemo(() => {
+    const set = new Set<string>();
+    for (const s of stands) if (s.tipo) set.add(s.tipo);
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [stands]);
+
+  const matchesTipo = React.useCallback(
+    (s: MapStand) => tipoFilter === ALL || s.tipo === tipoFilter,
+    [tipoFilter],
+  );
 
   const withHotspots = React.useMemo(
     () =>
       stands
         .map((s) => ({ stand: s, hs: parseHotspot(s.hotspot) }))
-        .filter((x) => x.hs !== null) as {
+        .filter((x) => x.hs !== null && matchesTipo(x.stand)) as {
         stand: MapStand;
         hs: NonNullable<ReturnType<typeof parseHotspot>>;
       }[],
-    [stands],
+    [stands, matchesTipo],
   );
 
   /* zoom com a roda do mouse, centrado no cursor */
@@ -80,7 +95,6 @@ export function InteractiveImageMap({
       const delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
       const next = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev + delta));
       if (next === prev) return prev;
-      // ajusta pan para manter ponto sob cursor fixo
       setPan((p) => ({
         x: mx - (mx - p.x) * (next / prev),
         y: my - (my - p.y) * (next / prev),
@@ -121,26 +135,59 @@ export function InteractiveImageMap({
     const item: CartItem = {
       id: stand.id, code: stand.code,
       priceCents: stand.priceCents, sizeM2: stand.sizeM2,
-      segment: stand.segment, sector: stand.sector,
+      segment: stand.segment, tipo: stand.tipo,
+      sector: stand.sector, positionLabel: stand.positionLabel,
     };
     toggle(item);
   };
 
-  /* agrupar por segmento para o painel */
-  const bySegment = React.useMemo(() => {
+  /* agrupar por ASA (sector) para o painel */
+  const byAsa = React.useMemo(() => {
     const map = new Map<string, MapStand[]>();
     for (const s of stands) {
-      const key = s.segment ?? "Sem segmento";
+      if (!matchesTipo(s)) continue;
+      const key = s.sector ?? "Sem ASA";
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(s);
     }
     return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [stands]);
+  }, [stands, matchesTipo]);
 
   const hoveredEntry = withHotspots.find((x) => x.stand.id === (hovered ?? focused));
+  const asaLabel = (key: string) => (key === "Sem ASA" ? key : `ASA ${key}`);
 
   return (
     <div className="space-y-4">
+      {/* ── filtro por Tipo ───────────────────────────────────── */}
+      {tipos.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2">
+          <span className="text-xs font-medium text-gray-500">Tipo:</span>
+          <button
+            onClick={() => setTipoFilter(ALL)}
+            className={`rounded-full border px-3 py-0.5 text-xs font-medium transition-colors ${
+              tipoFilter === ALL
+                ? "border-brand-navy bg-brand-navy text-white"
+                : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            Todos
+          </button>
+          {tipos.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTipoFilter(t)}
+              className={`rounded-full border px-3 py-0.5 text-xs font-medium transition-colors ${
+                tipoFilter === t
+                  ? "border-brand-navy bg-brand-navy text-white"
+                  : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* ── viewport do mapa ──────────────────────────────────── */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         {/* barra de controles */}
@@ -226,11 +273,18 @@ export function InteractiveImageMap({
               className="pointer-events-none absolute left-3 top-3 z-20 w-48 rounded-lg border border-gray-200 bg-white p-2.5 text-xs shadow-lg"
             >
               <p className="text-sm font-bold text-brand-navy">Stand {hoveredEntry.stand.code}</p>
-              {hoveredEntry.stand.segment && (
-                <p className="text-gray-500">{hoveredEntry.stand.segment}</p>
+              {hoveredEntry.stand.tipo && (
+                <p className="text-gray-500">{hoveredEntry.stand.tipo}</p>
               )}
-              {hoveredEntry.stand.sector && (
-                <p className="text-gray-400 text-[11px]">{hoveredEntry.stand.sector}</p>
+              <div className="mt-1 flex justify-between">
+                <span className="text-gray-500">ASA</span>
+                <span className="font-medium">{hoveredEntry.stand.sector ?? "—"}</span>
+              </div>
+              {hoveredEntry.stand.positionLabel && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Localização</span>
+                  <span className="font-medium">{hoveredEntry.stand.positionLabel}</span>
+                </div>
               )}
               <div className="mt-1 flex justify-between">
                 <span className="text-gray-500">Status</span>
@@ -258,23 +312,23 @@ export function InteractiveImageMap({
         </div>
       </div>
 
-      {/* ── painel de áreas / stands ──────────────────────────── */}
+      {/* ── painel de áreas / stands (por ASA) ────────────────── */}
       <div className="rounded-xl border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 text-sm font-semibold text-brand-navy">Stands por área</h2>
+        <h2 className="mb-3 text-sm font-semibold text-brand-navy">Stands por ASA</h2>
         <div className="space-y-4">
-          {bySegment.map(([segment, segStands]) => {
-            const available = segStands.filter((s) => s.status === "AVAILABLE").length;
+          {byAsa.map(([asa, asaStands]) => {
+            const available = asaStands.filter((s) => s.status === "AVAILABLE").length;
             return (
-              <div key={segment}>
+              <div key={asa}>
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-800">{segment}</span>
+                  <span className="text-sm font-medium text-gray-800">{asaLabel(asa)}</span>
                   <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">
                     {available} disponíve{available === 1 ? "l" : "is"}
                   </span>
-                  <span className="text-xs text-gray-400">{segStands.length} no total</span>
+                  <span className="text-xs text-gray-400">{asaStands.length} no total</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {segStands.map((s) => {
+                  {asaStands.map((s) => {
                     const sel = selectedIds.has(s.id);
                     const isFoc = focused === s.id;
                     const color = standStatusColor[s.status];
@@ -282,7 +336,7 @@ export function InteractiveImageMap({
                       <button
                         key={s.id}
                         type="button"
-                        title={`${s.code} — ${standStatusLabel[s.status]}${s.sizeM2 ? ` · ${s.sizeM2} m²` : ""} · ${formatBRL(s.priceCents)}`}
+                        title={`${s.code}${s.tipo ? ` · ${s.tipo}` : ""}${s.positionLabel ? ` · ${s.positionLabel}` : ""} — ${standStatusLabel[s.status]}${s.sizeM2 ? ` · ${s.sizeM2} m²` : ""} · ${formatBRL(s.priceCents)}`}
                         onClick={() => {
                           setFocused((f) => (f === s.id ? null : s.id));
                           select(s);

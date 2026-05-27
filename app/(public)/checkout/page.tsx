@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCNPJ } from "@/lib/utils";
-import { createOrder } from "./actions";
+import { createOrder, validateStandIds } from "./actions";
 
 const SEGMENTS = [
   "Alimentos e Bebidas",
@@ -21,16 +21,40 @@ const SEGMENTS = [
 ];
 
 export default function CheckoutPage() {
-  const { items, clear } = useCart();
+  const { items, remove, clear } = useCart();
   const router = useRouter();
   const [cnpj, setCnpj] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [stalePruned, setStalePruned] = React.useState(false);
+  const validated = React.useRef(false);
+
+  // Valida IDs do carrinho contra o banco assim que os items forem carregados
+  // do localStorage; remove os que não existem mais no DB.
+  React.useEffect(() => {
+    if (validated.current || items.length === 0) return;
+    validated.current = true;
+    validateStandIds(items.map((i) => i.id)).then((validIds) => {
+      const invalid = items.filter((i) => !validIds.includes(i.id));
+      if (invalid.length > 0) {
+        invalid.forEach((i) => remove(i.id));
+        setStalePruned(true);
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   if (items.length === 0) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
-        <p className="text-gray-600">Você ainda não selecionou nenhum stand.</p>
+        {stalePruned ? (
+          <>
+            <p className="font-semibold text-gray-800">Os stands que você havia selecionado não estão mais disponíveis.</p>
+            <p className="mt-1 text-sm text-gray-500">Eles podem ter sido reservados ou o mapa foi atualizado.</p>
+          </>
+        ) : (
+          <p className="text-gray-600">Você ainda não selecionou nenhum stand.</p>
+        )}
         <Link href="/mapa" className="mt-4 inline-block">
           <Button>Ir para o mapa</Button>
         </Link>
@@ -167,10 +191,24 @@ export default function CheckoutPage() {
           </CardContent>
         </Card>
 
+        {stalePruned && (
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800">
+            Alguns stands do seu carrinho foram removidos pois não estão mais disponíveis.
+            Confira os stands abaixo antes de continuar.
+          </div>
+        )}
+
         {error && (
-          <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            {error}
-          </p>
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <p>{error}</p>
+            {error.includes("não foi encontrado") && (
+              <p className="mt-2">
+                <Link href="/mapa" className="font-semibold underline">
+                  Voltar ao mapa e selecionar novamente →
+                </Link>
+              </p>
+            )}
+          </div>
         )}
 
         <Button type="submit" size="lg" disabled={submitting}>

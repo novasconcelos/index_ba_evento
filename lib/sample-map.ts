@@ -3,11 +3,44 @@ import type { StandStatus } from "@/lib/enums";
 export interface StandSpec {
   code: string;
   segment: string;
-  sector: string;
+  tipo: string;
+  sector: string; // ASA: A / B / FOYER
+  positionLabel: string; // Localização (= code no exemplo)
   sizeM2: number;
   priceCents: number;
   status: StandStatus;
   svgShapeId: string;
+  hotspot: string; // JSON {x,y,w,h} normalizado (0..1) sobre o mapa 3D
+}
+
+// Regiões aproximadas das asas sobre a imagem 3D (geral.jpg), em coords 0..1.
+// `slope` desloca o Y ao longo das colunas para acompanhar a perspectiva.
+interface GridRegion {
+  x0: number; x1: number; y0: number; y1: number;
+  cols: number; rows: number; slope: number;
+}
+
+const ASA_REGIONS: Record<string, GridRegion> = {
+  // Asa esquerda (desce em direção ao centro): ASA A
+  A: { x0: 0.07, x1: 0.43, y0: 0.20, y1: 0.62, cols: 8, rows: 4, slope: 0.16 },
+  // Asa direita (sobe em direção à direita): ASA B
+  B: { x0: 0.57, x1: 0.94, y0: 0.30, y1: 0.66, cols: 8, rows: 2, slope: -0.16 },
+  // Centro (foyer)
+  FOYER: { x0: 0.44, x1: 0.56, y0: 0.55, y1: 0.72, cols: 4, rows: 2, slope: 0 },
+};
+
+function gridHotspot(index: number, region: GridRegion): string {
+  const { x0, x1, y0, y1, cols, rows, slope } = region;
+  const cellW = (x1 - x0) / cols;
+  const cellH = (y1 - y0) / rows;
+  const c = index % cols;
+  const r = Math.floor(index / cols) % rows;
+  const w = cellW * 0.72;
+  const h = cellH * 0.6;
+  const x = x0 + c * cellW + (cellW - w) / 2;
+  const y = y0 + r * cellH + (cellH - h) / 2 + slope * (c / Math.max(1, cols - 1));
+  const round = (n: number) => +n.toFixed(4);
+  return JSON.stringify({ x: round(x), y: round(y), w: round(w), h: round(h) });
 }
 
 interface Block {
@@ -22,6 +55,19 @@ const BLOCKS: Block[] = [
   { sectorLetter: "G", segment: "Agroindústria", asa: "A", count: 16 },
   { sectorLetter: "O", segment: "Institucional", asa: "B", count: 16 },
 ];
+
+// Tipos reais da planilha (BASE_GERAL).
+export const SAMPLE_TIPOS = [
+  "Padrão",
+  "Tech",
+  "Piso",
+  "Padrão com depósito",
+  "Restaurante",
+  "Cervejaria",
+  "Carrinho Praça de Alimentação",
+];
+
+export const SAMPLE_ASAS = ["A", "B", "FOYER"];
 
 const SIZES = [9, 18, 27];
 const PRICE_PER_M2_CENTS = 45000; // R$ 450,00 / m²
@@ -52,6 +98,7 @@ export function buildSampleMap(): SampleMap {
   const stands: StandSpec[] = [];
   const shapes: string[] = [];
   const labels: string[] = [];
+  const asaCursor: Record<string, number> = { A: 0, B: 0, FOYER: 0 };
 
   BLOCKS.forEach((block, blockIndex) => {
     const blockTop = BLOCK_TOP + blockIndex * BLOCK_GAP;
@@ -70,14 +117,21 @@ export function buildSampleMap(): SampleMap {
       const h = CELL_H - 16;
       const size = SIZES[i % SIZES.length];
 
+      const region = ASA_REGIONS[block.asa] ?? ASA_REGIONS.A;
+      const hotspot = gridHotspot(asaCursor[block.asa] ?? 0, region);
+      asaCursor[block.asa] = (asaCursor[block.asa] ?? 0) + 1;
+
       stands.push({
         code,
         segment: block.segment,
-        sector: `ASA ${block.asa}`,
+        tipo: SAMPLE_TIPOS[(blockIndex * 5 + i) % SAMPLE_TIPOS.length],
+        sector: block.asa, // ASA: "A" / "B"
+        positionLabel: code,
         sizeM2: size,
         priceCents: size * PRICE_PER_M2_CENTS,
         status: initialStatus(blockIndex * 5 + i),
         svgShapeId: code,
+        hotspot,
       });
 
       shapes.push(

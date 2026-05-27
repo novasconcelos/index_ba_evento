@@ -44,8 +44,9 @@ model Stand {
   eventId       String
   event         Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
   code          String
-  segment       String?
-  sector        String? // ASA A / B
+  segment       String? // mantido para dashboards/metas
+  tipo          String? // Estande ou Piso (lista cadastrável — StandOption kind=TIPO)
+  sector        String? // ASA: A / B / FOYER (lista cadastrável — StandOption kind=ASA)
   sizeM2        Int?
   priceCents    Int         @default(0)
   status        String      @default("AVAILABLE")
@@ -57,6 +58,20 @@ model Stand {
   updatedAt     DateTime    @updatedAt
 
   @@unique([eventId, code])
+}
+
+// Listas cadastráveis pelo admin (Tipo, ASA, Localização). O valor é gravado
+// diretamente nos campos do Stand (tipo / sector / positionLabel).
+model StandOption {
+  id        String   @id @default(cuid())
+  kind      String // "TIPO" | "ASA" | "LOCALIZACAO" (ver lib/enums.ts)
+  value     String // valor gravado no stand (ex.: "A", "Padrão", "H31")
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([kind, value])
 }
 
 model Exhibitor {

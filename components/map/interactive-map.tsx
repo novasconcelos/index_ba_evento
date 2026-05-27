@@ -13,7 +13,9 @@ export interface MapStand {
   priceCents: number;
   sizeM2: number | null;
   segment: string | null;
-  sector: string | null;
+  tipo: string | null;
+  sector: string | null; // ASA
+  positionLabel: string | null; // Localização
   svgShapeId: string | null;
   hotspot?: string | null;
 }
@@ -106,7 +108,9 @@ export function InteractiveMap({
       priceCents: stand.priceCents,
       sizeM2: stand.sizeM2,
       segment: stand.segment,
+      tipo: stand.tipo,
       sector: stand.sector,
+      positionLabel: stand.positionLabel,
     };
     toggle(item);
   };

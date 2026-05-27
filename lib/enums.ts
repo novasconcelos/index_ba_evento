@@ -28,6 +28,15 @@ export type Captador = "FIEB" | "SEBRAE" | "BAHIA_EVENTOS" | "OUTRO";
 
 export type GoalMetric = "REVENUE" | "STANDS_SOLD";
 
+// Listas cadastráveis pelo admin (modelo StandOption).
+export type StandOptionKind = "TIPO" | "ASA" | "LOCALIZACAO";
+
+export const STAND_OPTION_KINDS: StandOptionKind[] = [
+  "TIPO",
+  "ASA",
+  "LOCALIZACAO",
+];
+
 export const STAND_STATUSES: StandStatus[] = [
   "AVAILABLE",
   "RESERVED",

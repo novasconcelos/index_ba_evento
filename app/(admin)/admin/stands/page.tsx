@@ -41,8 +41,9 @@ export default async function StandsPage() {
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
               <th className="p-3">Código</th>
-              <th className="p-3">Segmento</th>
-              <th className="p-3">Setor</th>
+              <th className="p-3">Tipo</th>
+              <th className="p-3">ASA</th>
+              <th className="p-3">Localização</th>
               <th className="p-3">m²</th>
               <th className="p-3">Valor</th>
               <th className="p-3">Status</th>
@@ -53,8 +54,9 @@ export default async function StandsPage() {
             {stands.map((s) => (
               <tr key={s.id}>
                 <td className="p-3 font-medium">{s.code}</td>
-                <td className="p-3 text-gray-600">{s.segment ?? "-"}</td>
+                <td className="p-3 text-gray-600">{s.tipo ?? "-"}</td>
                 <td className="p-3 text-gray-600">{s.sector ?? "-"}</td>
+                <td className="p-3 text-gray-600">{s.positionLabel ?? "-"}</td>
                 <td className="p-3 text-gray-600">{s.sizeM2 ?? "-"}</td>
                 <td className="p-3">{formatBRL(s.priceCents)}</td>
                 <td className="p-3">

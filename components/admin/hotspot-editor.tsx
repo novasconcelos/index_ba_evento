@@ -133,6 +133,76 @@ export function HotspotEditor({
       const h  = ex?.h ?? DEFAULT_H;
       return { ...prev, [activeId]: { x: clamp01(x - w / 2), y: clamp01(y - h / 2), w, h } };
     });
+    // auto-avança para o próximo stand ainda sem área (agiliza o cadastro)
+    const idx  = stands.findIndex((s) => s.id === activeId);
+    const next = stands.slice(idx + 1).find((s) => !hotspots[s.id]);
+    if (next) setActiveId(next.id);
+  };
+
+  /* ── mover/redimensionar com o teclado (precisão) ───────────── */
+  React.useEffect(() => {
+    const ARROWS = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+      if (!activeId || !hotspots[activeId]) return;
+      if (e.key === "Delete" || e.key === "Backspace") {
+        e.preventDefault();
+        removeActive();
+        return;
+      }
+      if (!ARROWS.includes(e.key)) return;
+      e.preventDefault();
+      const step = e.shiftKey ? 0.01 : 0.002;
+      setHotspots((prev) => {
+        const o = prev[activeId];
+        if (!o) return prev;
+        const n = { ...o };
+        if (e.altKey) {
+          if (e.key === "ArrowRight") n.w = Math.min(1 - o.x, o.w + step);
+          if (e.key === "ArrowLeft")  n.w = Math.max(0.005, o.w - step);
+          if (e.key === "ArrowDown")  n.h = Math.min(1 - o.y, o.h + step);
+          if (e.key === "ArrowUp")    n.h = Math.max(0.005, o.h - step);
+        } else {
+          if (e.key === "ArrowRight") n.x = clamp01(o.x + step);
+          if (e.key === "ArrowLeft")  n.x = clamp01(o.x - step);
+          if (e.key === "ArrowDown")  n.y = clamp01(o.y + step);
+          if (e.key === "ArrowUp")    n.y = clamp01(o.y - step);
+        }
+        return { ...prev, [activeId]: n };
+      });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId, hotspots]);
+
+  /* ── distribui em grade os stands ainda sem área ────────────── */
+  const autoDistribute = () => {
+    const missing = stands.filter((s) => !hotspots[s.id]);
+    if (missing.length === 0) return;
+    const cols = Math.ceil(Math.sqrt(missing.length));
+    const x0 = 0.08, x1 = 0.92, y0 = 0.15, y1 = 0.8;
+    const rows = Math.ceil(missing.length / cols);
+    const cellW = (x1 - x0) / cols;
+    const cellH = (y1 - y0) / rows;
+    const w = cellW * 0.7;
+    const h = cellH * 0.6;
+    const round = (n: number) => +n.toFixed(4);
+    setHotspots((prev) => {
+      const next = { ...prev };
+      missing.forEach((s, i) => {
+        const c = i % cols;
+        const r = Math.floor(i / cols);
+        next[s.id] = {
+          x: round(x0 + c * cellW + (cellW - w) / 2),
+          y: round(y0 + r * cellH + (cellH - h) / 2),
+          w: round(w),
+          h: round(h),
+        };
+      });
+      return next;
+    });
   };
 
   /* ── arrastar hotspot / handle ──────────────────────────────── */
@@ -196,6 +266,10 @@ export function HotspotEditor({
           Remover área
         </Button>
 
+        <Button type="button" size="sm" variant="outline" onClick={autoDistribute}>
+          Auto-distribuir
+        </Button>
+
         <span className="text-xs text-gray-500">{placedCount}/{stands.length} posicionados</span>
 
         {/* zoom */}
@@ -219,8 +293,11 @@ export function HotspotEditor({
       </div>
 
       <p className="text-xs text-gray-500">
-        Selecione um stand, dê zoom e <strong>clique no mapa</strong> para posicionar.
-        Arraste a área para mover; quadradinho do canto para redimensionar. Scroll = zoom.
+        Selecione um stand, dê zoom e <strong>clique no mapa</strong> para posicionar — o
+        próximo stand sem área é selecionado automaticamente. Arraste para mover; quadradinho
+        do canto para redimensionar. <strong>Setas</strong> do teclado ajustam a posição
+        (<strong>Alt+setas</strong> redimensiona, <strong>Shift</strong> move mais rápido,
+        <strong>Delete</strong> remove). Scroll = zoom.
       </p>
 
       {/* viewport do mapa */}

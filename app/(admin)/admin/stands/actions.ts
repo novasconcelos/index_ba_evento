@@ -10,7 +10,7 @@ import { parseBRLToCents } from "@/lib/utils";
 function readFields(formData: FormData) {
   return {
     code: String(formData.get("code") ?? "").trim(),
-    segment: String(formData.get("segment") ?? "").trim() || null,
+    tipo: String(formData.get("tipo") ?? "").trim() || null,
     sector: String(formData.get("sector") ?? "").trim() || null,
     sizeM2: formData.get("sizeM2")
       ? Number(formData.get("sizeM2"))

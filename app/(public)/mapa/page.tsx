@@ -32,7 +32,9 @@ export default async function MapaPage() {
     priceCents: s.priceCents,
     sizeM2: s.sizeM2,
     segment: s.segment,
+    tipo: s.tipo,
     sector: s.sector,
+    positionLabel: s.positionLabel,
     svgShapeId: s.svgShapeId,
     hotspot: s.hotspot,
   }));

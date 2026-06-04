@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta · INDEX Bahia · In9 Tecnologia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400&family=Inter:opsz,wght@14..32,400;14..32,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          oklch(0.15 0.01 255);
+      --bg-2:        oklch(0.185 0.012 252);
+      --bg-3:        oklch(0.225 0.013 250);
+      --line:        oklch(0.34 0.014 250 / 0.5);
+      --line-soft:   oklch(0.34 0.014 250 / 0.24);
+      --fg:          oklch(0.96 0.006 240);
+      --fg-2:        oklch(0.75 0.01 245);
+      --fg-3:        oklch(0.55 0.012 250);
+      --accent:      oklch(0.68 0.15 250);
+      --accent-2:    oklch(0.75 0.13 240);
+      --accent-soft: oklch(0.68 0.15 250 / 0.14);
+      --glow:        oklch(0.68 0.15 250 / 0.26);
+      --green:       oklch(0.78 0.18 145);
+      --font-sans:   'Inter', system-ui, sans-serif;
+      --font-serif:  'Fraunces', Georgia, serif;
+      --font-mono:   'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--fg);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      font-feature-settings: 'ss01', 'cv11';
+      font-optical-sizing: auto;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, oklch(0.34 0.014 250 / 0.24) 1px, transparent 1px),
+        linear-gradient(to bottom, oklch(0.34 0.014 250 / 0.24) 1px, transparent 1px);
+      background-size: 88px 88px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 75%);
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Layout ─── */
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    section {
+      padding: 120px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--line);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Nav ─── */
+    .nav {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      background: oklch(0.185 0.012 252 / 0.55);
+      backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 20px;
+      box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.04), 0 20px 60px -30px black;
+      white-space: nowrap;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2.2s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 oklch(0.78 0.18 145 / 0.5); }
+      50%       { box-shadow: 0 0 0 7px oklch(0.78 0.18 145 / 0); }
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      color: var(--fg-2);
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 999px;
+      transition: color .15s, background .15s;
+    }
+
+    .nav-links a:hover { color: var(--fg); background: oklch(0.24 0.013 252); }
+
+    /* ─── Eyebrow ─── */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--fg-3);
+      margin-bottom: 20px;
+    }
+
+    .eyebrow__bar {
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--fg-3);
+      flex-shrink: 0;
+    }
+
+    .eyebrow__num { color: var(--accent); }
+
+    /* ─── Eyebrow pill ─── */
+    .epill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--fg-3);
+      background: oklch(0.2 0.012 252 / 0.85);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 14px;
+    }
+
+    .epill__dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+
+    /* ─── Headings ─── */
+    .h-hero {
+      font-family: var(--font-sans);
+      font-size: clamp(38px, 6.4vw, 92px);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      font-weight: 500;
+      color: var(--fg);
+    }
+
+    .h-hero em, .h-title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .h-hero em { color: var(--fg); }
+
+    .h-title {
+      font-family: var(--font-sans);
+      font-size: clamp(34px, 4.2vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: 20px;
+    }
+
+    .h-title em { color: var(--accent); }
+
+    .h-card {
+      font-family: var(--font-sans);
+      font-size: clamp(22px, 2.4vw, 32px);
+      font-weight: 500;
+      letter-spacing: -0.028em;
+      line-height: 1.15;
+      color: var(--fg);
+      margin-bottom: 10px;
+    }
+
+    .h-sm {
+      font-family: var(--font-sans);
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin-bottom: 8px;
+    }
+
+    /* ─── Lede ─── */
+    .lede {
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--fg-2);
+      max-width: 54ch;
+      margin-bottom: 0;
+    }
+
+    /* ─── Card ─── */
+    .card {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,
+        oklch(0.2 0.012 252 / 0.85) 0%,
+        oklch(0.165 0.01 254 / 0.85) 100%);
+      backdrop-filter: blur(14px);
+      padding: 28px;
+      transition: border-color .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      background: radial-gradient(ellipse 70% 70% at 50% 0%,
+        oklch(0.68 0.15 250 / 0.07), transparent 70%);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+    }
+
+    .card:hover { border-color: oklch(0.5 0.05 250); transform: translateY(-1px); }
+    .card:hover::after { opacity: 1; }
+
+    /* ─── Buttons ─── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border-radius: 999px;
+      border: 1px solid var(--fg);
+      background: var(--fg);
+      color: oklch(0.16 0.012 255);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px -12px var(--glow);
+      transition: background .15s, transform .15s;
+    }
+
+    .btn-primary:hover { background: oklch(0.93 0.01 240); transform: translateY(-1px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+
+    .btn-ghost:hover {
+      border-color: oklch(0.6 0.08 250);
+      background: oklch(0.24 0.013 252);
+    }
+
+    /* ─── Stage badge ─── */
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid oklch(0.68 0.15 250 / 0.3);
+      border-radius: 999px;
+      padding: 6px 14px;
+      margin-bottom: 20px;
+    }
+
+    /* ─── Deliverable list ─── */
+    .del-group { margin-bottom: 32px; }
+
+    .del-group__label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-3);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line-soft);
+      display: block;
+    }
+
+    .del-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .del-list li {
+      font-size: 14.5px;
+      color: var(--fg-2);
+      line-height: 1.5;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .del-list li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 9px;
+      width: 6px; height: 1px;
+      background: var(--accent);
+    }
+
+    .del-list li strong { color: var(--fg); font-weight: 500; }
+
+    /* ─── Frente card list ─── */
+    .flist { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+
+    .flist li {
+      font-size: 13.5px;
+      color: var(--fg-2);
+      line-height: 1.45;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .flist li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 11px;
+      top: 1px;
+    }
+
+    /* ─── Tables ─── */
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .tbl thead tr { border-bottom: 1px solid var(--line); }
+
+    .tbl th {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-3);
+      text-align: left;
+      padding: 10px 0;
+      font-weight: 400;
+    }
+
+    .tbl th:last-child, .tbl td:last-child { text-align: right; }
+
+    .tbl td {
+      font-size: 14px;
+      color: var(--fg-2);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: middle;
+    }
+
+    .tbl__check { color: var(--green); font-family: var(--font-mono); font-size: 12px; }
+    .tbl__mono  { font-family: var(--font-mono); font-size: 13px; color: var(--fg-3); }
+    .tbl__price { font-family: var(--font-mono); font-size: 15px; color: var(--fg); }
+
+    .tbl__subtotal td {
+      background: var(--accent-soft);
+      border-top: 1px solid oklch(0.68 0.15 250 / 0.3);
+      border-bottom: 1px solid oklch(0.68 0.15 250 / 0.3);
+      color: var(--fg);
+      font-weight: 500;
+      padding: 16px 0;
+    }
+
+    .tbl__subtotal .tbl__price { font-size: 18px; color: var(--accent); }
+
+    .tbl__total td { color: var(--fg); font-weight: 500; border-bottom: none; }
+    .tbl__total .tbl__price { font-size: 20px; }
+
+    .opt-tag {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fg-3);
+      background: oklch(0.2 0.012 252);
+      border: 1px solid var(--line-soft);
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ─── Layout helpers ─── */
+    .grid-2col { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+    .grid-2sym { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-3sym { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .sticky-top { position: sticky; top: 100px; }
+
+    .stack { display: flex; flex-direction: column; }
+    .gap4  { gap: 4px; }
+    .gap8  { gap: 8px; }
+    .gap12 { gap: 12px; }
+    .gap16 { gap: 16px; }
+    .gap20 { gap: 20px; }
+    .gap24 { gap: 24px; }
+    .gap32 { gap: 32px; }
+    .gap48 { gap: 48px; }
+    .mt8   { margin-top: 8px; }
+    .mt16  { margin-top: 16px; }
+    .mt20  { margin-top: 20px; }
+    .mt24  { margin-top: 24px; }
+    .mt32  { margin-top: 32px; }
+    .mt48  { margin-top: 48px; }
+    .mt64  { margin-top: 64px; }
+
+    /* ─── Icon neon ─── */
+    .icon-neon { color: var(--accent); filter: drop-shadow(0 0 5px oklch(0.68 0.15 250 / 0.65)); overflow: visible; }
+
+    /* ─── Price display ─── */
+    .price-big {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      color: var(--fg);
+      line-height: 1;
+    }
+
+    .price-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-3);
+      margin-top: 4px;
+    }
+
+    /* ─── Info box ─── */
+    .info-box {
+      padding: 16px 20px;
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--fg-3);
+      line-height: 1.5;
+    }
+
+    .info-box--accent {
+      background: var(--accent-soft);
+      border-color: oklch(0.68 0.15 250 / 0.3);
+      color: var(--fg-2);
+    }
+
+    .info-box__label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fg-3);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ─── Payment flow ─── */
+    .pay-flow { display: flex; margin-top: 32px; }
+
+    .pay-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 24px 16px;
+      background: linear-gradient(180deg,
+        oklch(0.2 0.012 252 / 0.85) 0%,
+        oklch(0.165 0.01 254 / 0.85) 100%);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .pay-step:first-child { border-radius: 12px 0 0 12px; }
+    .pay-step:last-child  { border-radius: 0 12px 12px 0; }
+    .pay-step + .pay-step { border-left: none; }
+
+    .pay-step__pct { font-family: var(--font-mono); font-size: 30px; color: var(--fg); }
+    .pay-step__label { font-size: 12px; color: var(--fg-3); line-height: 1.4; max-width: 18ch; }
+
+    /* ─── Timeline ─── */
+    .timeline { display: flex; flex-direction: column; }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 28px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line-soft);
+      align-items: start;
+    }
+
+    .tl-item:last-child { border-bottom: none; }
+
+    .tl-date {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--fg-3);
+      text-align: right;
+      line-height: 1.4;
+      padding-top: 2px;
+    }
+
+    .tl-stage {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 3px;
+    }
+
+    .tl-title {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: 2px;
+    }
+
+    .tl-status { font-size: 13px; color: var(--fg-3); }
+    .tl-status--live { color: var(--green); }
+
+    /* ─── Steps list ─── */
+    .steps-list { display: flex; flex-direction: column; }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line-soft);
+      align-items: start;
+    }
+
+    .step-item:last-child { border-bottom: none; }
+    .step-item__num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); opacity: .65; }
+    .step-item__title { font-size: 15px; font-weight: 500; color: var(--fg); margin-bottom: 3px; }
+    .step-item__desc  { font-size: 13.5px; color: var(--fg-3); line-height: 1.45; }
+
+    /* ─── Process cards ─── */
+    .proc-num {
+      font-family: var(--font-mono);
+      font-size: 38px;
+      color: var(--accent);
+      opacity: .2;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .proc-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .proc-title {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--fg);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .proc-scope { font-size: 13px; color: var(--fg-3); line-height: 1.5; flex: 1; }
+
+    .proc-footer {
+      border-top: 1px solid var(--line-soft);
+      padding-top: 14px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .proc-price { font-family: var(--font-mono); font-size: 18px; color: var(--fg); }
+    .proc-time  { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); }
+
+    .proc-opt {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fg-3);
+      background: var(--accent-soft);
+      border-radius: 4px;
+      padding: 2px 6px;
+      width: fit-content;
+      margin-top: 4px;
+    }
+
+    /* ─── Stat cards ─── */
+    .stat-card {
+      text-align: center;
+      padding: 36px 24px;
+    }
+
+    .stat-num {
+      font-family: var(--font-mono);
+      font-size: 42px;
+      color: var(--fg);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--fg-3);
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      padding: 80px 0;
+      border-top: 1px solid var(--line);
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: end;
+    }
+
+    .footer-brand {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--fg-3);
+      margin-bottom: 6px;
+    }
+
+    .footer-tagline { font-size: 14px; color: var(--fg-3); margin-bottom: 28px; }
+
+    .contact-row { display: flex; flex-direction: column; gap: 8px; }
+
+    .contact-item { display: flex; gap: 12px; align-items: baseline; }
+
+    .contact-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fg-3);
+      min-width: 64px;
+    }
+
+    .contact-val { font-size: 14px; color: var(--fg-2); }
+
+    .footer-right { text-align: right; }
+
+    .footer-validity {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-3);
+      margin-bottom: 8px;
+    }
+
+    .footer-notice { font-size: 12px; color: var(--fg-3); max-width: 32ch; margin-left: auto; line-height: 1.5; margin-bottom: 24px; }
+
+    /* ─── Hero stage pill ─── */
+    .spill {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(180deg,
+        oklch(0.2 0.012 252 / 0.85) 0%,
+        oklch(0.165 0.01 254 / 0.85) 100%);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 18px;
+      backdrop-filter: blur(14px);
+      transition: border-color .2s;
+    }
+
+    .spill:hover { border-color: oklch(0.5 0.05 250); }
+
+    .spill__num { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 20px; }
+    .spill__title { font-size: 13.5px; font-weight: 500; color: var(--fg); line-height: 1.3; }
+    .spill__desc  { font-size: 12px; color: var(--fg-3); margin-top: 2px; }
+    .spill__body  { flex: 1; }
+    .spill__price { font-family: var(--font-mono); font-size: 13px; color: var(--fg-2); text-align: right; }
+    .spill__time  { font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); display: block; text-align: right; margin-top: 2px; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 960px) {
+      .wrap { padding: 0 20px; }
+      section { padding: 80px 0; }
+      .grid-2col, .grid-2sym, .footer-grid { grid-template-columns: 1fr; }
+      .grid-4col { grid-template-columns: repeat(2, 1fr); }
+      .sticky-top { position: static; }
+      .hero-right { display: none; }
+      .footer-right { text-align: left; }
+      .footer-notice { margin-left: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .grid-3col, .grid-4col, .grid-3sym { grid-template-columns: 1fr; }
+      .nav { padding: 8px 14px; gap: 12px; }
+      .nav-links { display: none; }
+      .pay-flow { flex-direction: column; }
+      .pay-step { border-radius: 12px !important; border: 1px solid var(--line) !important; }
+      .pay-step + .pay-step { border-left: 1px solid var(--line) !important; margin-top: -1px; }
+    }
+
+    /* ─── Print / PDF ─── */
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      body { padding-top: 0 !important; }
+      .nav { display: none !important; }
+      section, .card { break-inside: avoid; }
+      hr { display: none; }
+      .hero { min-height: unset; padding: 80px 0 60px; }
+      .hero-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+<!-- ═══ SVG ICON SYMBOLS ═══ -->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+    </symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+    </symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>
+    </symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+    </symbol>
+    <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+    </symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>
+    </symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+    </symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
+    </symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
+    </symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<!-- NAV removida na versão PDF -->
+
+
+<!-- ═══ HERO ═══ -->
+<section style="min-height: 100vh; display: flex; align-items: center; padding-top: 80px; padding-bottom: 80px;">
+  <div class="wrap" style="width: 100%;">
+    <div style="display: grid; grid-template-columns: minmax(300px, 480px) 1fr; gap: 64px; align-items: center;">
+
+      <div>
+        <div class="epill" style="margin-bottom: 28px;">
+          <span class="epill__dot" style="background: var(--accent);"></span>
+          Proposta Comercial · 2026
+        </div>
+        <h1 class="h-hero">
+          Plataforma<br><em>INDEX Bahia.</em>
+        </h1>
+        <div class="stack gap8 mt32" style="font-size: 14px;">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); min-width: 72px;">Cliente</span>
+            <span style="color: var(--fg-2);">INDEX Bahia · FIEB / SEBRAE</span>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); min-width: 72px;">Proponente</span>
+            <span style="color: var(--fg-2);">In9 Tecnologia</span>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); min-width: 72px;">Validade</span>
+            <span style="color: var(--fg-2);">30 dias a partir do envio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right stack gap10">
+        <div class="spill">
+          <span class="spill__num">01</span>
+          <div class="spill__body">
+            <div class="spill__title">Reservar stand online + painel de gestão</div>
+            <div class="spill__desc">Mapa interativo, reservas, contratos, leads, admin completo</div>
+          </div>
+          <div>
+            <span class="spill__price">R$ 40.000</span>
+            <span class="spill__time">6–8 semanas</span>
+          </div>
+        </div>
+        <div class="spill">
+          <span class="spill__num">02</span>
+          <div class="spill__body">
+            <div class="spill__title">Nova landing page premium</div>
+            <div class="spill__desc">Reestruturada e integrada ao mapa, numa só estrutura</div>
+          </div>
+          <div>
+            <span class="spill__price">R$ 15.000</span>
+            <span class="spill__time" style="color: var(--accent);">opcional</span>
+          </div>
+        </div>
+        <div class="spill">
+          <span class="spill__num">03</span>
+          <div class="spill__body">
+            <div class="spill__title">Pagamento online + assinatura digital</div>
+            <div class="spill__desc">Pix, boleto, cartão e contrato eletrônico sem papel</div>
+          </div>
+          <div>
+            <span class="spill__price">R$ 22.000</span>
+            <span class="spill__time" style="color: var(--accent);">opcional</span>
+          </div>
+        </div>
+        <div class="spill">
+          <span class="spill__num">04</span>
+          <div class="spill__body">
+            <div class="spill__title">PWA — app instalável do evento</div>
+            <div class="spill__desc">Instalável pelo navegador, sem loja de apps</div>
+          </div>
+          <div>
+            <span class="spill__price">R$ 36.000</span>
+            <span class="spill__time" style="color: var(--accent);">opcional</span>
+          </div>
+        </div>
+        <div class="spill">
+          <span class="spill__num">05</span>
+          <div class="spill__body">
+            <div class="spill__title">Inscrição de visitantes + credenciamento</div>
+            <div class="spill__desc">Inscrição online, crachá com QR Code e controle de acesso</div>
+          </div>
+          <div>
+            <span class="spill__price">R$ 36.000</span>
+            <span class="spill__time" style="color: var(--accent);">opcional</span>
+          </div>
+        </div>
+        <div class="spill">
+          <span class="spill__num">06</span>
+          <div class="spill__body">
+            <div class="spill__title">CRM + atendimento por WhatsApp</div>
+            <div class="spill__desc">Nutrição de leads e integração com inteligência artificial</div>
+          </div>
+          <div>
+            <span class="spill__price">R$ 30.000</span>
+            <span class="spill__time" style="color: var(--accent);">opcional</span>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; padding-right: 4px; margin-top: 4px;">
+          <span style="font-family: var(--font-mono); font-size: 11.5px; color: var(--fg-3);">
+           
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 00 — VISÃO GERAL ═══ -->
+<section id="visao-geral">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">00</span>
+      — Visão geral
+    </div>
+    <h2 class="h-title">
+      Operação comercial de stands<br>completamente <em>digital.</em>
+    </h2>
+    <p class="lede">
+      Uma plataforma sob medida para o INDEX Bahia, entregue em seis módulos independentes.
+      Você valida cada entrega antes de avançar. Ao final, o código-fonte pertence ao INDEX.
+    </p>
+    <div class="grid-3sym mt48">
+      <div class="card stat-card">
+        <div class="stat-num" style="font-size: 28px;">6–8 sem.</div>
+        <div class="stat-label">para entrar no ar</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num">6</div>
+        <div class="stat-label">módulos independentes</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num" style="font-size: 28px; color: var(--accent);">sob medida</div>
+        <div class="stat-label">pertence ao INDEX</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 01 — O QUE PRECISA ═══ -->
+<section id="frentes">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">01</span>
+      — O que o INDEX precisa
+    </div>
+    <h2 class="h-title" style="max-width: 28ch;">
+      Comercial, gestão e operação<br><em>integrados numa só plataforma.</em>
+    </h2>
+    <p class="lede">Do primeiro clique no mapa até o dia do evento: comercial, gestão e operação.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr; margin-top: 48px;">
+      <!-- Coluna 01 -->
+      <div style="padding: 0 40px 0 0;">
+        <div style="font-family: var(--font-mono); font-size: 60px; font-weight: 700; color: var(--accent); text-shadow: 0 0 32px oklch(0.68 0.15 250 / 0.4); line-height: 1; opacity: 0.85; margin-bottom: 20px;">01</div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-map"/></svg></div>
+        <div class="h-sm">Comercial — vendas</div>
+        <ul class="flist mt16">
+          <li>Mapa interativo com disponibilidade em tempo real</li>
+          <li>Captura de leads (e-mail + WhatsApp) para o funil</li>
+          <li>Reserva online, cadastro da empresa e contrato</li>
+          <li>Pagamento por Pix, boleto ou cartão</li>
+        </ul>
+      </div>
+      <!-- Divisória -->
+      <div style="background: var(--line-soft); margin: 0 40px;"></div>
+      <!-- Coluna 02 -->
+      <div style="padding: 0 40px;">
+        <div style="font-family: var(--font-mono); font-size: 60px; font-weight: 700; color: var(--accent); text-shadow: 0 0 32px oklch(0.68 0.15 250 / 0.4); line-height: 1; opacity: 0.85; margin-bottom: 20px;">02</div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-chart"/></svg></div>
+        <div class="h-sm">Gestão — painel admin</div>
+        <ul class="flist mt16">
+          <li>Painel executivo: receita, vendas e conversão</li>
+          <li>Editor visual do mapa de stands</li>
+          <li>Lista de pedidos por etapa do processo</li>
+          <li>Relatório financeiro e controle de inadimplência</li>
+        </ul>
+      </div>
+      <!-- Divisória -->
+      <div style="background: var(--line-soft); margin: 0 40px;"></div>
+      <!-- Coluna 03 -->
+      <div style="padding: 0 0 0 40px;">
+        <div style="font-family: var(--font-mono); font-size: 60px; font-weight: 700; color: var(--accent); text-shadow: 0 0 32px oklch(0.68 0.15 250 / 0.4); line-height: 1; opacity: 0.85; margin-bottom: 20px;">03</div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-zap"/></svg></div>
+        <div class="h-sm">Operação no dia — opcional</div>
+        <ul class="flist mt16">
+          <li>PWA (web app) para visitantes e expositores</li>
+          <li>Inscrição online de visitantes com QR Code</li>
+          <li>Credenciamento e controle de acesso na portaria</li>
+          <li>Controle de veículos e atendimento por WhatsApp</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ O QUE MUDA ═══ -->
+<section id="o-que-muda">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      — O que muda com a plataforma
+    </div>
+    <h2 class="h-title">
+      Resultado concreto<br>desde o primeiro <em>módulo.</em>
+    </h2>
+    <p class="lede">O que muda para a equipe já no primeiro módulo, antes de qualquer outra entrega.</p>
+    <div class="grid-4col mt48">
+
+      <div class="card" style="text-align: center; padding: 40px 20px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 160px; height: 100px; background: radial-gradient(ellipse, oklch(0.68 0.15 250 / 0.10), transparent 70%); pointer-events: none;"></div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;"><svg width="18" height="18" class="icon-neon"><use href="#i-clipboard"/></svg></div>
+        <div style="font-family: var(--font-mono); font-size: 52px; font-weight: 700; color: var(--accent); text-shadow: 0 0 28px oklch(0.68 0.15 250 / 0.45); line-height: 1; margin-bottom: 14px;">0</div>
+        <div class="h-sm">Planilhas manuais</div>
+        <p style="font-size: 13px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">Reservas, status de pagamento e contratos numa só plataforma, sem dados duplicados nem retrabalho.</p>
+      </div>
+
+      <div class="card" style="text-align: center; padding: 40px 20px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 160px; height: 100px; background: radial-gradient(ellipse, oklch(0.68 0.15 250 / 0.10), transparent 70%); pointer-events: none;"></div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;"><svg width="18" height="18" class="icon-neon"><use href="#i-activity"/></svg></div>
+        <div style="font-family: var(--font-mono); font-size: 52px; font-weight: 700; color: var(--accent); text-shadow: 0 0 28px oklch(0.68 0.15 250 / 0.45); line-height: 1; margin-bottom: 14px;">100%</div>
+        <div class="h-sm">Visão em tempo real</div>
+        <p style="font-size: 13px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">Receita captada, stands disponíveis e contratos pendentes visíveis no painel, a qualquer momento.</p>
+      </div>
+
+      <div class="card" style="text-align: center; padding: 40px 20px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 160px; height: 100px; background: radial-gradient(ellipse, oklch(0.68 0.15 250 / 0.10), transparent 70%); pointer-events: none;"></div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;"><svg width="18" height="18" class="icon-neon"><use href="#i-pen"/></svg></div>
+        <div style="font-family: var(--font-mono); font-size: 42px; font-weight: 700; color: var(--accent); text-shadow: 0 0 28px oklch(0.68 0.15 250 / 0.45); line-height: 1; margin-bottom: 14px;">auto</div>
+        <div class="h-sm">Contrato automático</div>
+        <p style="font-size: 13px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">Ao confirmar a reserva, o sistema gera e envia o contrato. Sem precisar montar nada manualmente.</p>
+      </div>
+
+      <div class="card" style="text-align: center; padding: 40px 20px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 160px; height: 100px; background: radial-gradient(ellipse, oklch(0.68 0.15 250 / 0.10), transparent 70%); pointer-events: none;"></div>
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;"><svg width="18" height="18" class="icon-neon"><use href="#i-target"/></svg></div>
+        <div style="font-family: var(--font-mono); font-size: 52px; font-weight: 700; color: var(--accent); text-shadow: 0 0 28px oklch(0.68 0.15 250 / 0.45); line-height: 1; margin-bottom: 14px;">×1</div>
+        <div class="h-sm">Leads organizados</div>
+        <p style="font-size: 13px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">Todos os interessados captados no mapa ficam registrados, com funil visível e sem lead perdido em e-mail.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 02 — OS SEIS MÓDULOS ═══ -->
+<section id="etapas">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">02</span>
+      — Os seis módulos
+    </div>
+    <h2 class="h-title">
+      Cada entrega é independente.<br>Você só avança quando <em>quiser.</em>
+    </h2>
+    <p class="lede">
+      Cada módulo entra em produção e é validado pelo INDEX antes do próximo começar.
+      Contrate o que faz sentido para o momento.
+    </p>
+    <div class="grid-3col mt48">
+      <div class="card stack" style="min-height: 280px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" class="icon-neon"><use href="#i-map"/></svg></div>
+          <div class="proc-num">01</div>
+        </div>
+        <div class="proc-tag">Plataforma</div>
+        <div class="proc-title">Reservar stand online + painel de gestão</div>
+        <div class="proc-scope">Mapa interativo interativo, captação de leads, contratos em PDF, área do expositor e painel admin completo.</div>
+        <div class="proc-footer">
+          <span class="proc-price">R$ 40.000</span>
+          <span class="proc-time">6–8 semanas</span>
+        </div>
+      </div>
+      <div class="card stack" style="min-height: 280px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" class="icon-neon"><use href="#i-monitor"/></svg></div>
+          <div class="proc-num">02</div>
+        </div>
+        <div class="proc-tag">Landing page</div>
+        <div class="proc-title">Nova landing page premium</div>
+        <div class="proc-scope">Site reestruturado em versão premium, já integrado ao mapa de stands, numa única estrutura para manter.</div>
+        <div class="proc-footer">
+          <span class="proc-price">R$ 15.000</span>
+          <span class="proc-time">4–5 semanas</span>
+          <span class="proc-opt">Opcional</span>
+        </div>
+      </div>
+      <div class="card stack" style="min-height: 280px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" class="icon-neon"><use href="#i-card"/></svg></div>
+          <div class="proc-num">03</div>
+        </div>
+        <div class="proc-tag">Pagamento</div>
+        <div class="proc-title">Cobrança online e assinatura digital</div>
+        <div class="proc-scope">Pix, boleto e cartão com baixa automática. Contrato assinado eletronicamente, sem papel.</div>
+        <div class="proc-footer">
+          <span class="proc-price">R$ 22.000</span>
+          <span class="proc-time">6–8 semanas</span>
+          <span class="proc-opt">Opcional</span>
+        </div>
+      </div>
+      <div class="card stack" style="min-height: 280px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" class="icon-neon"><use href="#i-phone"/></svg></div>
+          <div class="proc-num">04</div>
+        </div>
+        <div class="proc-tag">PWA</div>
+        <div class="proc-title">App instalável para visitantes e expositores</div>
+        <div class="proc-scope">Web app instalável pelo navegador (sem loja), com mapa do evento, catálogo, programação e QR Code.</div>
+        <div class="proc-footer">
+          <span class="proc-price">R$ 36.000</span>
+          <span class="proc-time">6–8 semanas</span>
+          <span class="proc-opt">Opcional</span>
+        </div>
+      </div>
+      <div class="card stack" style="min-height: 280px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" class="icon-neon"><use href="#i-qr"/></svg></div>
+          <div class="proc-num">05</div>
+        </div>
+        <div class="proc-tag">Credenciamento</div>
+        <div class="proc-title">Inscrição de visitantes + credenciamento</div>
+        <div class="proc-scope">Inscrição online de visitantes, crachá com QR Code, credenciamento na portaria e controle de acesso e veículos.</div>
+        <div class="proc-footer">
+          <span class="proc-price">R$ 36.000</span>
+          <span class="proc-time">8–10 semanas</span>
+          <span class="proc-opt">Opcional · modular</span>
+        </div>
+      </div>
+      <div class="card stack" style="min-height: 280px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" class="icon-neon"><use href="#i-chat"/></svg></div>
+          <div class="proc-num">06</div>
+        </div>
+        <div class="proc-tag">CRM + WhatsApp</div>
+        <div class="proc-title">CRM e atendimento por WhatsApp</div>
+        <div class="proc-scope">Gestão de relacionamento, nutrição de leads e atendimento por WhatsApp com integração de inteligência artificial.</div>
+        <div class="proc-footer">
+          <span class="proc-price">R$ 30.000</span>
+          <span class="proc-time">5–7 semanas</span>
+          <span class="proc-opt">Opcional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 03 — MÓDULO 1 ═══ -->
+<section id="etapa-1">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">03</span>
+      — Módulo 1
+    </div>
+    <div class="grid-2col">
+      <div class="sticky-top">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-map"/></svg></div>
+        <span class="stage-badge">Módulo 1</span>
+        <h2 class="h-title" style="font-size: clamp(28px, 3vw, 42px);">
+          Reservar stand online<br>e <em>administrar.</em>
+        </h2>
+        <div class="price-big">R$ 40.000</div>
+        <div class="price-label mt4">6–8 semanas após assinatura</div>
+        <p style="font-size: 15px; color: var(--fg-2); line-height: 1.6; margin-top: 16px;">
+          A plataforma entra em produção. O INDEX consegue vender stand online
+          no primeiro dia, com captação de leads e administração completa.
+          Todos os demais módulos se conectam a ele.
+        </p>
+      </div>
+      <div>
+        <div class="del-group">
+          <span class="del-group__label">O que o expositor faz</span>
+          <ul class="del-list">
+            <li><strong>Mapa interativo interativo</strong> sobre a planta real do evento, com seleção visual do stand</li>
+            <li>Filtros por <strong>Tipo</strong> (Estande / Piso / Tech etc.), <strong>ASA</strong> (A / B / Foyer) e <strong>Localização</strong></li>
+            <li>Status em tempo real: disponível, reservado, vendido, patrocínio, bloqueado</li>
+            <li><strong>Captura de lead</strong> (e-mail + WhatsApp) obrigatória na primeira seleção, alimentando o funil comercial</li>
+            <li>Cadastro da empresa (CNPJ, dados de contato, responsável)</li>
+            <li><strong>Contrato em PDF gerado automaticamente</strong> a partir do modelo do INDEX</li>
+            <li>Área do expositor com senha para acompanhar o pedido e baixar documentos</li>
+            <li>Link de acompanhamento público sem necessidade de login</li>
+          </ul>
+        </div>
+        <div class="del-group">
+          <span class="del-group__label">O que o admin faz</span>
+          <ul class="del-list">
+            <li><strong>Painel executivo:</strong> receita prevista, stands vendidos, leads, taxa de conversão (percentual de leads que fecharam) e metas</li>
+            <li><strong>Editor visual do mapa:</strong> arraste e configure áreas de stand sobre a planta do evento</li>
+            <li>Cadastro completo de stands (código, ASA, tipo, localização, metragem, preço, status)</li>
+            <li>Listas configuráveis pelo admin (tipos de estande, ASAs, localizações)</li>
+            <li>Lista de pedidos com funil completo; cada pedido exibe expositor, stands, contrato e pagamento</li>
+            <li><strong>Lista de leads</strong> com status (Novo / Contatado / Convertido) e exportação para planilha</li>
+            <li>Lista de expositores com filtros por captador (FIEB / SEBRAE)</li>
+            <li>Relatório financeiro básico e perfis de acesso (Admin / Staff)</li>
+          </ul>
+        </div>
+        <div class="del-group">
+          <span class="del-group__label">Infraestrutura inclusa</span>
+          <ul class="del-list">
+            <li>Hospedagem em nuvem com domínio do INDEX, certificado de segurança e cópias de segurança diárias</li>
+            <li>E-mails automáticos: confirmação, contrato, link de acompanhamento</li>
+            <li>Banco de dados gerenciado e seguro</li>
+            <li>Treinamento da equipe (2 sessões online + manual em vídeo)</li>
+            <li>Suporte intensivo nas 2 primeiras semanas após entrada em operação</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 04 — MÓDULO 2 ═══ -->
+<section id="etapa-landing">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">04</span>
+      — Módulo 2
+      <span style="font-size: 10px; opacity: .5; margin-left: 4px;">· opcional</span>
+    </div>
+    <div class="grid-2col">
+      <div class="sticky-top">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-monitor"/></svg></div>
+        <span class="stage-badge">Módulo 2</span>
+        <h2 class="h-title" style="font-size: clamp(28px, 3vw, 42px);">
+          Nova landing page<br><em>premium.</em>
+        </h2>
+        <div class="price-big">R$ 15.000</div>
+        <div class="price-label mt4">4–5 semanas</div>
+        <p style="font-size: 15px; color: var(--fg-2); line-height: 1.6; margin-top: 16px;">
+          Site de apresentação do INDEX reestruturado em versão premium, já integrado ao
+          mapa de stands da plataforma. Tudo na mesma estrutura, sem site separado para manter.
+        </p>
+        <div class="info-box info-box--accent mt20">
+          <span class="info-box__label">Vantagem de uma estrutura só</span>
+          A landing e a plataforma de vendas compartilham a mesma base de código, o mesmo domínio
+          e o mesmo painel, com menos custo de manutenção e identidade visual unificada.
+        </div>
+      </div>
+      <div>
+        <div class="del-group">
+          <span class="del-group__label">Entregáveis</span>
+          <ul class="del-list">
+            <li><strong>Design premium</strong> sob medida para a marca INDEX, responsivo (adapta-se a celular, tablet e computador)</li>
+            <li>Seções institucionais: o evento, números, expositores, patrocinadores, programação e contato</li>
+            <li><strong>Chamada direta para o mapa de stands:</strong> o visitante sai da landing já reservando</li>
+            <li>Captação de leads integrada ao mesmo funil comercial da plataforma</li>
+            <li>Otimização para buscadores (SEO) e velocidade de carregamento</li>
+            <li>Painel para editar textos, imagens e seções sem depender de programação</li>
+            <li>Integração com redes sociais e ferramentas de análise de acesso (Google Analytics)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 05 — MÓDULO 3 ═══ -->
+<section id="etapa-2">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">05</span>
+      — Módulo 3
+      <span style="font-size: 10px; opacity: .5; margin-left: 4px;">· opcional</span>
+    </div>
+    <div class="grid-2col">
+      <div class="sticky-top">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-card"/></svg></div>
+        <span class="stage-badge">Módulo 3</span>
+        <h2 class="h-title" style="font-size: clamp(28px, 3vw, 42px);">
+          Ciclo comercial<br>100% <em>online.</em>
+        </h2>
+        <div class="price-big">R$ 22.000</div>
+        <div class="price-label mt4">6–8 semanas</div>
+        <p style="font-size: 15px; color: var(--fg-2); line-height: 1.6; margin-top: 16px;">
+          Fecha o ciclo de vendas sem operação manual: contrato assinado eletronicamente,
+          pagamento processado e baixa automática no painel.
+        </p>
+        <div class="info-box mt20">
+          <span class="info-box__label">Custos dos provedores (pagos pelo INDEX)</span>
+          As taxas de transação dos provedores de pagamento e assinatura digital são de responsabilidade do INDEX. Integração e configuração estão inclusos no valor do módulo.
+        </div>
+      </div>
+      <div>
+        <div class="del-group">
+          <span class="del-group__label">Entregáveis</span>
+          <ul class="del-list">
+            <li>Integração com <strong>plataforma de pagamento</strong> (Mercado Pago ou banco utilizado pelo INDEX): Pix, boleto e cartão de crédito</li>
+            <li>Cobrança gerada automaticamente a partir do pedido, com link enviado por e-mail e WhatsApp ao expositor</li>
+            <li>Baixa automática: pagamento confirmado → pedido muda para "Pago" → notificação para o admin</li>
+            <li>Integração com <strong>assinatura digital</strong> (Clicksign ou assinador utilizado pelo INDEX). O contrato vai e volta assinado sem papel. Será necessária integração com as equipes de TI do INDEX</li>
+            <li>Notificações automáticas por <strong>WhatsApp</strong> e e-mail a cada mudança de status</li>
+            <li><strong>Relatório financeiro avançado:</strong> previsto × realizado, inadimplência, fechamento por período, exportação para planilha</li>
+            <li>Área do expositor exibe situação do pagamento, segunda via de boleto e comprovantes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 06 — MÓDULO 4 ═══ -->
+<section id="etapa-3">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">06</span>
+      — Módulo 4
+      <span style="font-size: 10px; opacity: .5; margin-left: 4px;">· opcional</span>
+    </div>
+    <div class="grid-2col">
+      <div class="sticky-top">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-phone"/></svg></div>
+        <span class="stage-badge">Módulo 4 · PWA</span>
+        <h2 class="h-title" style="font-size: clamp(28px, 3vw, 42px);">
+          O evento na palma<br>da <em>mão.</em>
+        </h2>
+        <div class="price-big">R$ 36.000</div>
+        <div class="price-label mt4">6–8 semanas</div>
+        <p style="font-size: 15px; color: var(--fg-2); line-height: 1.6; margin-top: 16px;">
+          Um PWA (Progressive Web App, aplicativo que roda no navegador e pode ser instalado no
+          celular) para visitantes e expositores usarem antes, durante e depois do evento.
+        </p>
+        <div class="info-box info-box--accent mt20">
+          <span class="info-box__label">Sem loja de aplicativos</span>
+          Instalável direto pelo navegador (adicionar à tela inicial). Sem App Store, sem Google Play,
+          sem contas de publicação nem aprovação de loja. Uma só base para todos os celulares.
+        </div>
+      </div>
+      <div>
+        <div class="del-group">
+          <span class="del-group__label">Entregáveis</span>
+          <ul class="del-list">
+            <li>Instalável direto pelo navegador (adicionar à tela inicial), sem loja, com a marca INDEX</li>
+            <li><strong>Mapa interativo</strong> do evento com filtro por ASA, segmento e tipo de stand</li>
+            <li>Localização de stand específico com indicação visual no mapa</li>
+            <li>Catálogo de expositores: logo, contato, segmento e link para WhatsApp</li>
+            <li>Programação do evento (palestras, talks, gastronomia) com lembretes no celular</li>
+            <li>QR Code (código de barras bidimensional lido pela câmera) de credenciamento, integrado ao Módulo 6</li>
+            <li><strong>Notificações push</strong> (alertas direto na tela do celular) segmentadas por perfil</li>
+            <li>Modo offline para mapa e catálogo: visitantes sem sinal de internet consultam normalmente</li>
+            <li>Painel admin para enviar notificações e editar programação</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 07 — MÓDULO 5 ═══ -->
+<section id="etapa-4">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">07</span>
+      — Módulo 5
+      <span style="font-size: 10px; opacity: .5; margin-left: 4px;">· opcional · modular</span>
+    </div>
+    <div class="grid-2col">
+      <div class="sticky-top">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-qr"/></svg></div>
+        <span class="stage-badge">Módulo 5</span>
+        <h2 class="h-title" style="font-size: clamp(28px, 3vw, 42px);">
+          Inscrição e<br>entrada no <em>dia.</em>
+        </h2>
+        <div class="price-big">R$ 36.000</div>
+        <div class="price-label mt4">8–10 semanas</div>
+        <p style="font-size: 15px; color: var(--fg-2); line-height: 1.6; margin-top: 16px;">
+          Da inscrição online do visitante até a entrada no evento: pré-credenciamento,
+          crachá com QR Code e controle de acesso na portaria. Cada bloco pode ser contratado à parte.
+        </p>
+        <div class="info-box info-box--accent mt20">
+          Exemplos modulares:<br>
+          Inscrição + credenciamento = <strong style="color: var(--fg);">R$ 28.000</strong><br>
+          Controle de acesso + veículos = <strong style="color: var(--fg);">R$ 14.000</strong>
+        </div>
+      </div>
+      <div>
+        <div class="del-group">
+          <span class="del-group__label">Blocos disponíveis</span>
+          <ul class="del-list">
+            <li><strong>Inscrição online de visitantes:</strong> cadastro antes do evento, ingresso com QR Code enviado por e-mail, validação na portaria</li>
+            <li><strong>Credenciamento físico:</strong> emissão de crachá com QR Code, totens de autoatendimento, leitura na entrada</li>
+            <li><strong>Controle de acesso:</strong> integração com catracas, histórico de entrada e saída em tempo real</li>
+            <li><strong>Controle de veículos:</strong> registro por QR Code, contagem de permanência, alertas de prazo excedido</li>
+            <li>Integrações com sistemas internos do INDEX (a definir conforme necessidade)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 08 — MÓDULO 6 ═══ -->
+<section id="etapa-crm">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">08</span>
+      — Módulo 6
+      <span style="font-size: 10px; opacity: .5; margin-left: 4px;">· opcional</span>
+    </div>
+    <div class="grid-2col">
+      <div class="sticky-top">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;"><svg width="18" height="18" class="icon-neon"><use href="#i-chat"/></svg></div>
+        <span class="stage-badge">Módulo 6</span>
+        <h2 class="h-title" style="font-size: clamp(28px, 3vw, 42px);">
+          Relacionamento<br>que <em>converte.</em>
+        </h2>
+        <div class="price-big">R$ 30.000</div>
+        <div class="price-label mt4">5–7 semanas</div>
+        <p style="font-size: 15px; color: var(--fg-2); line-height: 1.6; margin-top: 16px;">
+          Um CRM (sistema de gestão de relacionamento com o cliente) com atendimento por WhatsApp:
+          os leads capturados na plataforma são nutridos e atendidos até virarem venda.
+        </p>
+        <div class="info-box info-box--accent mt20">
+          <span class="info-box__label">Com inteligência artificial</span>
+          Respostas automáticas, triagem de leads e sugestões de atendimento usando IA —
+          o time foca nas conversas que realmente importam.
+        </div>
+      </div>
+      <div>
+        <div class="del-group">
+          <span class="del-group__label">Entregáveis</span>
+          <ul class="del-list">
+            <li><strong>Funil de relacionamento:</strong> cada lead avança por etapas (Novo → Em contato → Proposta → Fechado)</li>
+            <li><strong>Nutrição de leads:</strong> mensagens e e-mails automáticos por etapa do funil, sem trabalho manual</li>
+            <li><strong>Atendimento por WhatsApp</strong> integrado ao CRM, com histórico de cada conversa no perfil do lead</li>
+            <li><strong>Integração com inteligência artificial:</strong> respostas automáticas, triagem e sugestões de próximo passo</li>
+            <li>Distribuição de leads entre captadores (FIEB / SEBRAE) com metas e acompanhamento</li>
+            <li>Painel de desempenho: taxa de conversão, tempo de resposta e origem dos leads</li>
+            <li>Conectado ao mesmo banco de leads da plataforma, sem cadastro duplicado</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 09 — CONTINUIDADE ═══ -->
+<section id="suporte">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">09</span>
+      — Suporte e continuidade
+    </div>
+    <h2 class="h-title">
+      Incluso até o evento.<br><em>Simples assim.</em>
+    </h2>
+    <p class="lede">
+      O valor de cada módulo já cobre o desenvolvimento e a operação completa até o encerramento
+      do INDEX 2027. Após o evento, duas opções claras, sem surpresas.
+    </p>
+
+    <!-- Linha do tempo visual -->
+    <div class="mt48" style="position: relative; padding: 0 0 32px;">
+      <!-- barra de progresso -->
+      <div style="position: absolute; top: 22px; left: 0; right: 0; height: 2px; background: var(--line-soft); z-index: 0;"></div>
+      <div style="position: absolute; top: 22px; left: 0; width: 67%; height: 2px; background: var(--accent); z-index: 1; border-radius: 2px;"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0; position: relative; z-index: 2;">
+        <!-- Marco 1: Assinatura -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px;">
+          <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px oklch(0.68 0.15 250 / 0.25); margin-top: 17px;"></div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">Jun–Jul 2026</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 3px;">Assinatura</div>
+            <div style="font-size: 12px; color: var(--fg-3); margin-top: 2px;">Início dos trabalhos</div>
+          </div>
+        </div>
+        <!-- Marco 2: Plataforma no ar -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px oklch(0.68 0.15 250 / 0.25); margin-top: 17px;"></div>
+          <div style="text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">~Ago–Set 2026</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 3px;">Plataforma no ar</div>
+            <div style="font-size: 12px; color: var(--fg-3); margin-top: 2px;">6–8 sem. após assinatura</div>
+          </div>
+        </div>
+        <!-- Marco 3: Evento -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px oklch(0.78 0.18 145 / 0.25); margin-top: 16px;"></div>
+          <div style="text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--green);">Jun 2027</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 3px;">INDEX 2027</div>
+          </div>
+        </div>
+        <!-- Marco 4: Pós-evento -->
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+          <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--bg-3); border: 2px solid var(--line); margin-top: 17px;"></div>
+          <div style="text-align: right;">
+            <div style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3);">Jul 2027 em diante</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 3px;">Pós-evento</div>
+            <div style="font-size: 12px; color: var(--fg-3); margin-top: 2px;">Escolha o que faz sentido</div>
+          </div>
+        </div>
+      </div>
+      <!-- label período coberto -->
+      <div style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;">
+        <div style="width: 20px; height: 2px; background: var(--accent); border-radius: 2px;"></div>
+        <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3);">Manutenção e suporte inclusos neste período</span>
+      </div>
+    </div>
+
+    <!-- O que está incluso até o evento -->
+    <div class="card mt8" style="border-color: oklch(0.68 0.15 250 / 0.35); padding: 28px 32px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
+        <div>
+          <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); display: block; margin-bottom: 12px;">Incluso no valor de cada módulo · até o evento</span>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+            <li style="font-size: 13.5px; color: var(--fg-2); padding-left: 16px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Correção de erros em produção, sem limite</li>
+            <li style="font-size: 13.5px; color: var(--fg-2); padding-left: 16px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Atualizações de segurança mensais</li>
+            <li style="font-size: 13.5px; color: var(--fg-2); padding-left: 16px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Cópias de segurança diárias verificadas</li>
+            <li style="font-size: 13.5px; color: var(--fg-2); padding-left: 16px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Suporte por e-mail e WhatsApp (até 8h úteis)</li>
+            <li style="font-size: 13.5px; color: var(--fg-2); padding-left: 16px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Hospedagem e banco de dados no ar</li>
+          </ul>
+        </div>
+        <div style="border-left: 1px solid var(--line-soft); padding-left: 32px;">
+          <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); display: block; margin-bottom: 12px;">Evoluções durante o período</span>
+          <p style="font-size: 13.5px; color: var(--fg-2); line-height: 1.55;">
+            Ajustes de escopo, pequenas melhorias e configurações (até 6h/mês) estão inclusos.
+            Desenvolvimentos maiores são orçados separadamente por hora.
+          </p>
+          <div style="margin-top: 14px; font-family: var(--font-mono); font-size: 13px; color: var(--fg-3);">
+            Horas adicionais: <span style="color: var(--fg);">R$ 220/h</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pós-evento: 2 opções -->
+    <div style="margin-top: 14px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">
+        <span class="eyebrow__bar"></span>
+        Após o evento: escolha uma das opções
+      </div>
+      <div class="grid-2sym">
+
+        <!-- Opção A: Pacote de continuidade -->
+        <div class="card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">Opção A</span>
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3);">Mensal ou anual</span>
+          </div>
+          <div class="h-sm">Pacote de continuidade</div>
+          <p style="font-size: 13.5px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+            Mantém o sistema no ar após o evento, com acesso ao histórico de pedidos, expositores,
+            contratos e dados financeiros. Servidor e banco de dados ativos.
+          </p>
+          <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line-soft); display: flex; gap: 24px;">
+            <div>
+              <div style="font-family: var(--font-mono); font-size: 20px; color: var(--fg);">R$ 499</div>
+              <div style="font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); margin-top: 3px;">por mês</div>
+            </div>
+            <div style="border-left: 1px solid var(--line-soft); padding-left: 24px;">
+              <div style="font-family: var(--font-mono); font-size: 20px; color: var(--fg);">R$ 4.800</div>
+              <div style="font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); margin-top: 3px;">por ano <span style="color: var(--accent);">· 20% off</span></div>
+            </div>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 16px;">
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Servidor e banco de dados ativos</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Cópias de segurança diárias</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Acesso completo ao histórico</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Monitoramento de disponibilidade</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--fg-3);">+</span> Próxima edição: novo pacote de atualização</li>
+          </ul>
+          <div style="margin-top: 16px; padding: 10px 14px; border-radius: 8px; background: oklch(0.68 0.15 250 / 0.08); border: 1px solid oklch(0.68 0.15 250 / 0.2);">
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">✦ Bônus</span>
+            <p style="font-size: 12.5px; color: var(--fg-2); line-height: 1.5; margin-top: 5px;">Contratando um novo módulo para a próxima edição, o pacote de continuidade entra com <strong style="color: var(--fg);">desconto especial</strong> (a combinar).</p>
+          </div>
+        </div>
+
+        <!-- Opção B: Encerramento -->
+        <div class="card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">Opção B</span>
+            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--green);">sem custo</span>
+          </div>
+          <div class="h-sm">Encerramento limpo</div>
+          <p style="font-size: 13.5px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+            O INDEX recebe o código-fonte completo e a exportação de todos os dados
+            (pedidos, expositores, contratos, financeiro). Os servidores são desligados.
+          </p>
+          <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line-soft);">
+            <div style="font-family: var(--font-mono); font-size: 20px; color: var(--fg);">R$ 0</div>
+            <div style="font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); margin-top: 3px;">sem custo adicional</div>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 16px;">
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Código-fonte entregue ao INDEX</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Exportação completa dos dados</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--green);">✓</span> Histórico em planilha + PDF</li>
+            <li style="font-size: 13px; color: var(--fg-3); padding-left: 14px; position: relative;"><span style="position: absolute; left: 0; color: var(--fg-3);">→</span> Reativação futura: pacote a avaliar</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 10 — DIFERENCIAIS ═══ -->
+<section id="diferenciais">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">10</span>
+      — Diferenciais
+    </div>
+    <h2 class="h-title">
+      Por que esta proposta<br>faz <em>sentido.</em>
+    </h2>
+    <p class="lede">Cinco razões objetivas.</p>
+    <div class="grid-2sym mt48">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom: 12px;">
+          <span class="eyebrow__bar"></span>
+          <span class="eyebrow__num">01</span>
+        </div>
+        <div class="h-sm">Pagamento vinculado à entrega</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Cada módulo é pago quando está em produção e validado pelo INDEX.
+          Você não compromete orçamento com entregas futuras antes de ver o resultado da atual.
+        </p>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom: 12px;">
+          <span class="eyebrow__bar"></span>
+          <span class="eyebrow__num">02</span>
+        </div>
+        <div class="h-sm">Sob medida para o INDEX</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Identidade visual do INDEX, regras de captação (FIEB / SEBRAE),
+          tipologia de stands e o mapa real do evento. Não é um sistema genérico adaptado.
+        </p>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom: 12px;">
+          <span class="eyebrow__bar"></span>
+          <span class="eyebrow__num">03</span>
+        </div>
+        <div class="h-sm">Propriedade do código</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Ao final do projeto, o código-fonte pertence ao INDEX.
+          Sem licença anual, sem dependência de fornecedor para manter o sistema funcionando.
+        </p>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom: 12px;">
+          <span class="eyebrow__bar"></span>
+          <span class="eyebrow__num">04</span>
+        </div>
+        <div class="h-sm">Início rápido</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Módulo 1 em operação em 6 a 8 semanas após a assinatura, bem antes do ciclo
+          comercial do INDEX 2027, com tempo de sobra para os módulos seguintes.
+        </p>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="eyebrow" style="margin-bottom: 12px;">
+          <span class="eyebrow__bar"></span>
+          <span class="eyebrow__num">05</span>
+        </div>
+        <div class="h-sm">Comunicação direta com quem desenvolve</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px; max-width: 72ch;">
+          O time responsável pelo desenvolvimento é o mesmo que atende o cliente.
+          Sem intermediários, sem fila de suporte corporativo.
+          Decisões técnicas e comerciais acontecem na mesma conversa.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 11 — INVESTIMENTO ═══ -->
+<section id="investimento">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">11</span>
+      — Investimento
+    </div>
+    <h2 class="h-title">
+      Resumo do<br><em>investimento.</em>
+    </h2>
+    <p class="lede">O Módulo 1 coloca o INDEX vendendo online. Os demais são opcionais e somam conforme a necessidade.</p>
+    <table class="tbl mt48">
+      <thead>
+        <tr>
+          <th style="width: 36px;">#</th>
+          <th>Escopo</th>
+          <th style="width: 110px;">Prazo</th>
+          <th style="width: 130px;">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tbl__mono">01</td>
+          <td>
+            <strong style="color: var(--fg); font-weight: 500;">Reservar stand online + painel de gestão</strong>
+          </td>
+          <td class="tbl__mono">6–8 sem.</td>
+          <td class="tbl__price">R$ 40.000</td>
+        </tr>
+        <tr>
+          <td class="tbl__mono">02</td>
+          <td>
+            <strong style="color: var(--fg); font-weight: 500;">Nova landing page premium</strong>
+            <span class="opt-tag">Opcional</span>
+          </td>
+          <td class="tbl__mono">4–5 sem.</td>
+          <td class="tbl__price">R$ 15.000</td>
+        </tr>
+        <tr>
+          <td class="tbl__mono">03</td>
+          <td>
+            <strong style="color: var(--fg); font-weight: 500;">Pagamento online + assinatura digital</strong>
+            <span class="opt-tag">Opcional</span>
+          </td>
+          <td class="tbl__mono">6–8 sem.</td>
+          <td class="tbl__price">R$ 22.000</td>
+        </tr>
+        <tr>
+          <td class="tbl__mono">04</td>
+          <td>
+            <strong style="color: var(--fg); font-weight: 500;">PWA — app instalável</strong>
+            <span class="opt-tag">Opcional</span>
+          </td>
+          <td class="tbl__mono">6–8 sem.</td>
+          <td class="tbl__price">R$ 36.000</td>
+        </tr>
+        <tr>
+          <td class="tbl__mono">05</td>
+          <td>
+            <strong style="color: var(--fg); font-weight: 500;">Inscrição de visitantes + credenciamento</strong>
+            <span class="opt-tag">Opcional · modular</span>
+          </td>
+          <td class="tbl__mono">8–10 sem.</td>
+          <td class="tbl__price">R$ 36.000</td>
+        </tr>
+        <tr>
+          <td class="tbl__mono">06</td>
+          <td>
+            <strong style="color: var(--fg); font-weight: 500;">CRM + atendimento por WhatsApp</strong>
+            <span class="opt-tag">Opcional</span>
+          </td>
+          <td class="tbl__mono">5–7 sem.</td>
+          <td class="tbl__price">R$ 30.000</td>
+        </tr>
+        <tr class="tbl__total">
+          <td></td>
+          <td>Total — todos os módulos</td>
+          <td></td>
+          <td class="tbl__price">R$ 179.000</td>
+        </tr>
+        <tr style="opacity: .7;">
+          <td></td>
+          <td style="font-size: 13px; color: var(--fg-3);">
+            Pacote de continuidade pós-evento
+            <span class="opt-tag">Opcional</span>
+          </td>
+          <td class="tbl__mono">mensal</td>
+          <td style="font-family: var(--font-mono); font-size: 13px; color: var(--fg-3); text-align: right;">R$ 499/mês</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Forma de pagamento -->
+    <div class="mt64">
+      <div class="eyebrow" style="margin-bottom: 24px;">
+        <span class="eyebrow__bar"></span>
+        Forma de pagamento por módulo
+      </div>
+      <div class="pay-flow">
+        <div class="pay-step">
+          <div class="pay-step__pct">50%</div>
+          <div class="pay-step__label">Na assinatura do contrato (início dos trabalhos)</div>
+        </div>
+        <div class="pay-step">
+          <div class="pay-step__pct">50%</div>
+          <div class="pay-step__label">Na entrega em produção (aceite pelo INDEX)</div>
+        </div>
+      </div>
+      <div class="stack gap8 mt20" style="font-size: 13px; color: var(--fg-3);">
+        <span>— Validade desta proposta: 30 dias a partir do envio.</span>
+        <span>— Reajuste anual pelo IPCA (índice oficial de inflação), aplicável ao standby e aos pacotes de edição.</span>
+        <span>— Contrato com cláusula de nível de serviço, confidencialidade e transferência de propriedade intelectual ao INDEX no aceite final.</span>
+        <span>— Notas fiscais emitidas pela In9 Tecnologia.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CRONOGRAMA REMOVIDO -->
+<section id="cronograma" style="display:none">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">12</span>
+      — Cronograma
+    </div>
+    <div class="grid-2col">
+      <div>
+        <h2 class="h-title">
+          De jun 2026<br>ao INDEX <em>jun 2027.</em>
+        </h2>
+        <p class="lede" style="font-size: 16px;">
+          Considerando assinatura em junho de 2026 e o evento em junho de 2027.
+          Apenas o Módulo 1 é obrigatório. Os demais entram se contratados.
+        </p>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">Jun<br>2026</div>
+          <div>
+            <div class="tl-stage">Módulo 1 · base</div>
+            <div class="tl-title">Início · configuração do mapa e painel admin</div>
+            <div class="tl-status">Em desenvolvimento</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Jul<br>2026</div>
+          <div>
+            <div class="tl-stage">Módulo 1 · base</div>
+            <div class="tl-title">Validação e entrada em operação</div>
+            <div class="tl-status tl-status--live">Vendendo stand online</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Ago<br>2026</div>
+          <div>
+            <div class="tl-stage">Módulos 2 + 3 · opcionais</div>
+            <div class="tl-title">Landing page premium + pagamento e assinatura digital</div>
+            <div class="tl-status">Em desenvolvimento</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Set<br>2026</div>
+          <div>
+            <div class="tl-stage">Módulo 3 · opcional</div>
+            <div class="tl-title">Entrada em operação</div>
+            <div class="tl-status tl-status--live">Ciclo comercial 100% online</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Out–Nov<br>2026</div>
+          <div>
+            <div class="tl-stage">Módulo 4 · opcional</div>
+            <div class="tl-title">Desenvolvimento do PWA (app instalável)</div>
+            <div class="tl-status">Em desenvolvimento</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Dez<br>2026</div>
+          <div>
+            <div class="tl-stage">Módulos 4 + 5 · opcionais</div>
+            <div class="tl-title">Publicação do PWA + CRM e atendimento por WhatsApp</div>
+            <div class="tl-status tl-status--live">PWA disponível</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Jan–Abr<br>2027</div>
+          <div>
+            <div class="tl-stage">Módulo 6 · opcional</div>
+            <div class="tl-title">Inscrição de visitantes, credenciamento e controle de acesso</div>
+            <div class="tl-status">Em desenvolvimento</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">Jun<br>2027</div>
+          <div>
+            <div class="tl-stage">INDEX 2027</div>
+            <div class="tl-title">Evento ao vivo</div>
+            <div class="tl-status tl-status--live">Plataforma em produção</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 13 — SEGURANÇA ═══ -->
+<section id="seguranca">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="eyebrow__bar"></span>
+      <span class="eyebrow__num">13</span>
+      — Segurança
+    </div>
+    <h2 class="h-title">
+      Dados protegidos<br>desde o primeiro <em>dia.</em>
+    </h2>
+    <p class="lede">Boas práticas de segurança da informação desde o Módulo 1.</p>
+    <div class="grid-2sym mt48">
+      <div class="card">
+        <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); display: block; margin-bottom: 12px;">Autenticação</span>
+        <div class="h-sm">Controle de acesso seguro</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          NextAuth com tokens de sessão seguros (JWT, padrão de mercado para autenticação sem estado)
+          e senhas criptografadas via bcrypt (algoritmo de hash irreversível).
+          Sessões completamente separadas para admin e expositor.
+        </p>
+      </div>
+      <div class="card">
+        <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); display: block; margin-bottom: 12px;">LGPD</span>
+        <div class="h-sm">Lei Geral de Proteção de Dados</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Dados armazenados em servidores no Brasil, criptografia na transmissão e no armazenamento,
+          política de retenção e descarte de dados pessoais conforme a legislação vigente.
+        </p>
+      </div>
+      <div class="card">
+        <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); display: block; margin-bottom: 12px;">Disponibilidade</span>
+        <div class="h-sm">Cópias de segurança e monitoramento</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Cópias de segurança (backups) diárias com restauração rápida em caso de falha.
+          Monitoramento contínuo de erros e disponibilidade da plataforma.
+        </p>
+      </div>
+      <div class="card">
+        <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); display: block; margin-bottom: 12px;">SSL</span>
+        <div class="h-sm">Conexão criptografada</div>
+        <p style="font-size: 14px; color: var(--fg-2); line-height: 1.55; margin-top: 8px;">
+          Todo o tráfego entre o navegador do usuário e a plataforma é criptografado via SSL
+          (o cadeado verde no navegador). Nenhum dado trafega em aberto pela internet.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ 14 — PRÓXIMOS PASSOS ═══ -->
+<section id="proximos-passos">
+  <div class="wrap">
+    <div class="grid-2col">
+      <div>
+        <div class="eyebrow">
+          <span class="eyebrow__bar"></span>
+          <span class="eyebrow__num">14</span>
+          — Próximos passos
+        </div>
+        <h2 class="h-title">
+          Prontos para<br><em>começar.</em>
+        </h2>
+        <p class="lede" style="font-size: 16px;">
+          Início dos trabalhos em até 5 dias úteis após a assinatura.
+        </p>
+      </div>
+      <div class="steps-list">
+        <div class="step-item">
+          <span class="step-item__num">01</span>
+          <div>
+            <div class="step-item__title">Reunião de apresentação</div>
+            <div class="step-item__desc">1 hora, online ou presencial: apresentação da proposta e alinhamento de expectativas</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-item__num">02</span>
+          <div>
+            <div class="step-item__title">Ajustes de escopo</div>
+            <div class="step-item__desc">Refinamento de escopo, prazos e customizações específicas do INDEX</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-item__num">03</span>
+          <div>
+            <div class="step-item__title">Demonstração da plataforma (protótipo)</div>
+            <div class="step-item__desc">Apresentação interativa com link de acesso para avaliação</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-item__num">04</span>
+          <div>
+            <div class="step-item__title">Assinatura do contrato</div>
+            <div class="step-item__desc">Emissão da primeira nota fiscal (50% do Módulo 1) e início formal do projeto</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-item__num">05</span>
+          <div>
+            <div class="step-item__title">Kickoff</div>
+            <div class="step-item__desc">Início dos trabalhos em até 5 dias úteis após a assinatura</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metodologia de implementação -->
+    <div class="mt64">
+      <div class="eyebrow" style="margin-bottom: 32px;">
+        <span class="eyebrow__bar"></span>
+        Como implementamos, após a assinatura
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative;">
+        <!-- linha de conexão -->
+        <div style="position: absolute; top: 21px; left: 10%; right: 10%; height: 2px; background: var(--line-soft); z-index: 0;"></div>
+
+        <!-- Passo 1 -->
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; position: relative; z-index: 1;">
+          <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--accent-soft); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px;">🗺</div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">01</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 4px;">Diagnóstico</div>
+            <div style="font-size: 11.5px; color: var(--fg-3); margin-top: 4px; line-height: 1.4;">Mapeamento do evento, mapa e regras comerciais</div>
+          </div>
+        </div>
+
+        <!-- Passo 2 -->
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; position: relative; z-index: 1;">
+          <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--accent-soft); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px;">⚙️</div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">02</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 4px;">Configuração</div>
+            <div style="font-size: 11.5px; color: var(--fg-3); margin-top: 4px; line-height: 1.4;">Identidade visual, estandes, preços e fluxos</div>
+          </div>
+        </div>
+
+        <!-- Passo 3 -->
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; position: relative; z-index: 1;">
+          <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--accent-soft); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px;">✅</div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">03</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 4px;">Homologação</div>
+            <div style="font-size: 11.5px; color: var(--fg-3); margin-top: 4px; line-height: 1.4;">Validação com a equipe</div>
+          </div>
+        </div>
+
+        <!-- Passo 4 -->
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; position: relative; z-index: 1;">
+          <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--accent-soft); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px;">🚀</div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent);">04</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 4px;">Lançamento</div>
+            <div style="font-size: 11.5px; color: var(--fg-3); margin-top: 4px; line-height: 1.4;">Plataforma no ar + treinamento da equipe</div>
+          </div>
+        </div>
+
+        <!-- Passo 5 -->
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; position: relative; z-index: 1;">
+          <div style="width: 42px; height: 42px; border-radius: 50%; background: oklch(0.78 0.18 145 / 0.15); border: 2px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 16px;">🛡️</div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--green);">05</div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--fg); margin-top: 4px;">Suporte contínuo</div>
+            <div style="font-size: 11.5px; color: var(--fg-3); margin-top: 4px; line-height: 1.4;">Acompanhamento até o evento e além</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr>
+
+<!-- ═══ FOOTER / CONTATO ═══ -->
+<footer id="contato">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">In9 Tecnologia</div>
+        <div class="footer-tagline">Estúdio de tecnologia. Construído com precisão.</div>
+        <div class="contact-row">
+          <div class="contact-item">
+            <span class="contact-lbl">Empresa</span>
+            <span class="contact-val">In9 Tecnologia</span>
+          </div>        
+          <div class="contact-item">
+            <span class="contact-lbl">E-mail</span>
+            <span class="contact-val">[seu@email.com]</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-lbl">Telefone</span>
+            <span class="contact-val">[(71) 90000-0000]</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-lbl">CNPJ</span>
+            <span class="contact-val">[a informar]</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-validity">Válida por 30 dias · Emitida em junho de 2026</div>
+        <div class="footer-notice">
+          Documento confidencial · para uso exclusivo do INDEX Bahia.
+          Não reproduzir sem autorização da In9 Tecnologia.
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

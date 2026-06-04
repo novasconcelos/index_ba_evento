@@ -56,7 +56,7 @@ export function StandForm({
           />
         </div>
         <div>
-          <Label htmlFor="tipo">Tipo (Estande ou Piso)</Label>
+          <Label htmlFor="tipo">Tipo (Stand ou Piso)</Label>
           <Select id="tipo" name="tipo" defaultValue={stand?.tipo ?? ""}>
             <option value="">—</option>
             {optionList(tipos, stand?.tipo ?? null).map((t) => (

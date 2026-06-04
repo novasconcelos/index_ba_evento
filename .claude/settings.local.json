@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npm install @prisma/client next-auth@beta bcryptjs zod react-hook-form \"@hookform/resolvers\" recharts clsx tailwind-merge lucide-react)",
+      "PowerShell(npm install -D prisma \"@types/bcryptjs\")",
+      "Bash(powershell.exe -NoProfile -Command ' *)",
+      "PowerShell(docker info --format '{{.ServerVersion}}' 2>&1; \"exit=$LASTEXITCODE\")",
+      "PowerShell(try { $pids = \\(Get-NetTCPConnection -LocalPort 3002 -State Listen -ErrorAction Stop\\).OwningProcess | Select-Object -Unique; foreach \\($p in $pids\\) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue; \"parado PID $p\" } } catch { \"nada na 3002\" })",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls \"C:\\\\projetos\\\\Outros\\\\Mapa\")",
+      "Bash(cp \"C:\\\\projetos\\\\Outros\\\\Mapa\\\\geral.jpg\" \"C:\\\\projetos\\\\Empresa\\\\eventos_fieb\\\\public\\\\mapa-index.jpg\")",
+      "Bash(npx prisma *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

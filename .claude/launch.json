@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fieb",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3100
+    },
+    {
+      "name": "proposta_in9.html",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "4500", "."],
+      "port": 4500
+    }
+  ]
+}

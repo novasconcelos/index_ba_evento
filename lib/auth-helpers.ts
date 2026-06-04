@@ -5,6 +5,14 @@ import { auth } from "@/auth";
 // (exceto a página de login).
 export async function requireAdmin() {
   const session = await auth();
-  if (!session?.user) redirect("/admin/login");
+  if (session?.user?.kind !== "admin") redirect("/admin/login");
+  return session;
+}
+
+// Protege o portal do expositor (/painel). Redireciona para /entrar quando não
+// há sessão de expositor (inclusive se for uma sessão de admin).
+export async function requireExhibitor() {
+  const session = await auth();
+  if (session?.user?.kind !== "exhibitor") redirect("/entrar");
   return session;
 }

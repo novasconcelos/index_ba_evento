@@ -81,13 +81,32 @@ model Exhibitor {
   cnpj         String?
   contato      String?
   telefone     String?
-  email        String
+  email        String   @unique
+  passwordHash String? // conta do expositor (login no portal /painel)
   segment      String?
   captador     String?
   indicacao    String?
   orders       Order[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+// Lead = interesse capturado no mapa (e-mail + WhatsApp) antes de o visitante
+// finalizar (ou não) o pedido. Alimenta a aba "Leads" do admin.
+model Lead {
+  id        String   @id @default(cuid())
+  eventId   String?
+  email     String
+  whatsapp  String
+  standId   String? // stand que disparou a captura (opcional)
+  standCode String?
+  status    String   @default("NEW") // NEW | CONTACTED | CONVERTED (ver lib/enums.ts)
+  orderId   String? // preenchido quando o lead vira pedido
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
 }
 
 model Order {

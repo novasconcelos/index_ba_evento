@@ -5,7 +5,20 @@ import type {
   ContractStatus,
   PaymentStatus,
   StandOptionKind,
+  LeadStatus,
 } from "@/lib/enums";
+
+export const leadStatusLabel: Record<LeadStatus, string> = {
+  NEW: "Novo",
+  CONTACTED: "Contatado",
+  CONVERTED: "Convertido",
+};
+
+export const leadStatusColor: Record<LeadStatus, string> = {
+  NEW: "#3b82f6",
+  CONTACTED: "#eab308",
+  CONVERTED: "#22c55e",
+};
 
 export const standOptionKindLabel: Record<StandOptionKind, string> = {
   TIPO: "Tipo (Estande/Piso)",
@@ -41,7 +54,7 @@ export const standStatusColor: Record<StandStatus, string> = {
 
 export const orderStatusLabel: Record<OrderStatus, string> = {
   CART: "Carrinho",
-  RESERVED: "Estande reservado",
+  RESERVED: "Stand reservado",
   CONTRACT_PENDING: "Contrato em execução",
   SIGNED: "Contrato assinado",
   PAYMENT_PENDING: "Aguardando pagamento",

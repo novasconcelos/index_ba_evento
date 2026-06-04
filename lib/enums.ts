@@ -28,6 +28,11 @@ export type Captador = "FIEB" | "SEBRAE" | "BAHIA_EVENTOS" | "OUTRO";
 
 export type GoalMetric = "REVENUE" | "STANDS_SOLD";
 
+// Status do lead (interesse capturado no mapa).
+export type LeadStatus = "NEW" | "CONTACTED" | "CONVERTED";
+
+export const LEAD_STATUSES: LeadStatus[] = ["NEW", "CONTACTED", "CONVERTED"];
+
 // Listas cadastráveis pelo admin (modelo StandOption).
 export type StandOptionKind = "TIPO" | "ASA" | "LOCALIZACAO";
 

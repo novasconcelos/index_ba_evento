@@ -1,7 +1,9 @@
 "use server";
 
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { signIn } from "@/auth";
 import { getActiveEventOrThrow } from "@/lib/event";
 import { isValidCNPJ } from "@/lib/utils";
 import { buildContractHtml } from "@/lib/contract";
@@ -28,6 +30,7 @@ const schema = z.object({
   rtDocument: z.string().optional(),
   rtEmail: z.string().email().optional().or(z.literal("")),
   rtPhone: z.string().optional(),
+  password: z.string().min(8, "A senha deve ter ao menos 8 caracteres"),
   standIds: z.array(z.string()).min(1, "Selecione ao menos um stand"),
 });
 
@@ -69,6 +72,7 @@ export async function createOrder(
     rtDocument: formData.get("rtDocument") || undefined,
     rtEmail: formData.get("rtEmail") || undefined,
     rtPhone: formData.get("rtPhone") || undefined,
+    password: formData.get("password"),
     standIds: formData.getAll("standIds").map(String),
   });
 
@@ -97,6 +101,21 @@ export async function createOrder(
         .join(", ")}. Atualize o mapa e tente novamente.`,
     };
   }
+
+  // Conta do expositor (e-mail é único). Se já existe conta COM senha, exige
+  // login para não permitir "sequestrar" uma conta existente no checkout.
+  const normalizedEmail = data.email.trim().toLowerCase();
+  const existingExhibitor = await prisma.exhibitor.findUnique({
+    where: { email: normalizedEmail },
+  });
+  if (existingExhibitor?.passwordHash) {
+    return {
+      ok: false,
+      error:
+        "Já existe uma conta com este e-mail. Faça login para continuar (link “Entrar”).",
+    };
+  }
+  const passwordHash = await bcrypt.hash(data.password, 10);
 
   // Upload da marca (opcional)
   const brand = formData.get("brand");
@@ -131,19 +150,25 @@ export async function createOrder(
       throw new Error("CONFLICT");
     }
 
-    const exhibitor = await tx.exhibitor.create({
-      data: {
-        nomeFantasia: data.nomeFantasia,
-        razaoSocial: data.razaoSocial,
-        cnpj: data.cnpj,
-        contato: data.contato,
-        telefone: data.telefone,
-        email: data.email,
-        segment: data.segment,
-        captador: data.captador,
-        indicacao: data.indicacao,
-      },
-    });
+    const exhibitorData = {
+      nomeFantasia: data.nomeFantasia,
+      razaoSocial: data.razaoSocial,
+      cnpj: data.cnpj,
+      contato: data.contato,
+      telefone: data.telefone,
+      email: normalizedEmail,
+      segment: data.segment,
+      captador: data.captador,
+      indicacao: data.indicacao,
+      passwordHash,
+    };
+    // Reaproveita expositor pré-criado (seed/convite) sem senha; senão cria.
+    const exhibitor = existingExhibitor
+      ? await tx.exhibitor.update({
+          where: { id: existingExhibitor.id },
+          data: exhibitorData,
+        })
+      : await tx.exhibitor.create({ data: exhibitorData });
 
     const created = await tx.order.create({
       data: {
@@ -199,6 +224,12 @@ export async function createOrder(
       error: "Um dos stands acabou de ser reservado. Revise sua seleção.",
     };
   }
+
+  // Marca leads do mesmo e-mail como convertidos.
+  await prisma.lead.updateMany({
+    where: { email: normalizedEmail, status: { not: "CONVERTED" } },
+    data: { status: "CONVERTED", orderId: order.id },
+  });
 
   // Gera contrato + solicitação de assinatura
   const html = buildContractHtml({
@@ -256,6 +287,17 @@ export async function createOrder(
       <p><a href="${trackUrl}">${trackUrl}</a></p>`,
     text: `Acompanhe sua reserva: ${trackUrl}`,
   });
+
+  // Inicia a sessão do expositor para que ele já entre logado no portal.
+  try {
+    await signIn("exhibitor", {
+      email: normalizedEmail,
+      password: data.password,
+      redirect: false,
+    });
+  } catch {
+    // Sessão é um plus; se falhar, o expositor pode logar depois em /entrar.
+  }
 
   return { ok: true, token: order.trackingToken };
 }

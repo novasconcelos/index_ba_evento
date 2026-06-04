@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useCart, type CartItem } from "@/components/cart/cart-context";
+import { LeadCaptureModal, type LeadInfo } from "@/components/map/lead-capture-modal";
 import { formatBRL } from "@/lib/utils";
 import { standStatusLabel, standStatusColor } from "@/lib/labels";
 import { parseHotspot } from "@/lib/hotspot";
@@ -45,6 +46,32 @@ export function InteractiveImageMap({
   stands: MapStand[];
 }) {
   const { items, has, toggle } = useCart();
+
+  /* captura de lead (e-mail + WhatsApp) na 1ª seleção */
+  const [leadInfo, setLeadInfo] = React.useState<LeadInfo | null>(null);
+  const [pendingStand, setPendingStand] = React.useState<MapStand | null>(null);
+
+  React.useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("fieb-lead");
+      if (raw) setLeadInfo(JSON.parse(raw));
+    } catch {
+      // ignora
+    }
+  }, []);
+
+  const addToCart = React.useCallback(
+    (stand: MapStand) => {
+      const item: CartItem = {
+        id: stand.id, code: stand.code,
+        priceCents: stand.priceCents, sizeM2: stand.sizeM2,
+        segment: stand.segment, tipo: stand.tipo,
+        sector: stand.sector, positionLabel: stand.positionLabel,
+      };
+      toggle(item);
+    },
+    [toggle],
+  );
 
   /* zoom / pan */
   const [zoom, setZoom] = React.useState(1);
@@ -132,13 +159,28 @@ export function InteractiveImageMap({
   /* clique num stand */
   const select = (stand: MapStand) => {
     if (stand.status !== "AVAILABLE") return;
-    const item: CartItem = {
-      id: stand.id, code: stand.code,
-      priceCents: stand.priceCents, sizeM2: stand.sizeM2,
-      segment: stand.segment, tipo: stand.tipo,
-      sector: stand.sector, positionLabel: stand.positionLabel,
-    };
-    toggle(item);
+    // Remover (já está no carrinho) nunca exige captura.
+    if (selectedIds.has(stand.id)) {
+      addToCart(stand);
+      return;
+    }
+    // Primeira adição sem lead na sessão → abre o modal obrigatório.
+    if (!leadInfo) {
+      setPendingStand(stand);
+      return;
+    }
+    addToCart(stand);
+  };
+
+  const onLeadSaved = (info: LeadInfo) => {
+    try {
+      sessionStorage.setItem("fieb-lead", JSON.stringify(info));
+    } catch {
+      // ignora
+    }
+    setLeadInfo(info);
+    if (pendingStand) addToCart(pendingStand);
+    setPendingStand(null);
   };
 
   /* agrupar por ASA (sector) para o painel */
@@ -375,6 +417,14 @@ export function InteractiveImageMap({
           ))}
         </div>
       </div>
+
+      <LeadCaptureModal
+        open={pendingStand !== null}
+        standCode={pendingStand?.code}
+        standId={pendingStand?.id}
+        onSaved={onLeadSaved}
+        onCancel={() => setPendingStand(null)}
+      />
     </div>
   );
 }

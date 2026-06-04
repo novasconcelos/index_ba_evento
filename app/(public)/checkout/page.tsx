@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCart } from "@/components/cart/cart-context";
 import { CartSummary } from "@/components/cart/cart-summary";
 import { Button } from "@/components/ui/button";
@@ -22,12 +21,29 @@ const SEGMENTS = [
 
 export default function CheckoutPage() {
   const { items, remove, clear } = useCart();
-  const router = useRouter();
   const [cnpj, setCnpj] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [telefone, setTelefone] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [stalePruned, setStalePruned] = React.useState(false);
   const validated = React.useRef(false);
+
+  // Pré-preenche e-mail/WhatsApp a partir do lead capturado no mapa.
+  React.useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("fieb-lead");
+      if (raw) {
+        const lead = JSON.parse(raw) as { email?: string; whatsapp?: string };
+        if (lead.email) setEmail(lead.email);
+        if (lead.whatsapp) setTelefone(lead.whatsapp);
+      }
+    } catch {
+      // ignora
+    }
+  }, []);
 
   // Valida IDs do carrinho contra o banco assim que os items forem carregados
   // do localStorage; remove os que não existem mais no DB.
@@ -65,6 +81,14 @@ export default function CheckoutPage() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    if (password.length < 8) {
+      setError("A senha deve ter ao menos 8 caracteres.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("As senhas não conferem.");
+      return;
+    }
     setSubmitting(true);
     const fd = new FormData(e.currentTarget);
     for (const item of items) fd.append("standIds", item.id);
@@ -73,7 +97,14 @@ export default function CheckoutPage() {
       const result = await createOrder(fd);
       if (result.ok) {
         clear();
-        router.push(`/acompanhar/${result.token}`);
+        try {
+          sessionStorage.removeItem("fieb-lead");
+        } catch {
+          // ignora
+        }
+        // Navegação "hard" para o layout reler a sessão recém-criada
+        // (o expositor já entra logado, com "Minha conta" no topo).
+        window.location.assign(`/acompanhar/${result.token}`);
       } else {
         setError(result.error);
         setSubmitting(false);
@@ -128,11 +159,23 @@ export default function CheckoutPage() {
             </div>
             <div>
               <Label htmlFor="email">E-mail *</Label>
-              <Input id="email" name="email" type="email" required />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div>
-              <Label htmlFor="telefone">Telefone</Label>
-              <Input id="telefone" name="telefone" />
+              <Label htmlFor="telefone">Telefone / WhatsApp</Label>
+              <Input
+                id="telefone"
+                name="telefone"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+              />
             </div>
             <div>
               <Label htmlFor="contato">Contato (responsável)</Label>
@@ -171,6 +214,44 @@ export default function CheckoutPage() {
             <div>
               <Label htmlFor="rtPhone">Telefone</Label>
               <Input id="rtPhone" name="rtPhone" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Acesso para acompanhamento</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <p className="text-sm text-gray-500 sm:col-span-2">
+              Crie uma senha para voltar ao sistema, acompanhar o andamento da
+              solicitação e visualizar o contrato. Seu login será o e-mail acima.
+            </p>
+            <div>
+              <Label htmlFor="password">Senha *</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Mínimo 8 caracteres"
+                autoComplete="new-password"
+              />
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword">Confirmar senha *</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                required
+                minLength={8}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+              />
             </div>
           </CardContent>
         </Card>

@@ -8,6 +8,7 @@ import {
   Target,
   Mail,
   Settings,
+  Users,
   LogOut,
 } from "lucide-react";
 import { auth, signOut } from "@/auth";
@@ -16,6 +17,7 @@ import { IndexLogo } from "@/components/brand/index-logo";
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+  { href: "/admin/leads", label: "Leads", icon: Users },
   { href: "/admin/stands", label: "Stands", icon: Grid3x3 },
   { href: "/admin/mapa", label: "Editor do mapa", icon: MapIcon },
   { href: "/admin/expositores", label: "Expositores", icon: Building2 },
@@ -31,8 +33,9 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
-  // Página de login (sem sessão) é renderizada sem o chrome do admin.
-  if (!session?.user) {
+  // Sem sessão de admin (anônimo ou expositor) → renderiza a página de login
+  // sem o chrome do admin. As páginas internas já exigem admin via requireAdmin.
+  if (session?.user?.kind !== "admin") {
     return <div className="flex min-h-screen flex-1">{children}</div>;
   }
 

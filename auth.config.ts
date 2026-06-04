@@ -10,18 +10,22 @@ export const authConfig = {
   providers: [],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
+      const kind = (auth?.user as { kind?: string } | undefined)?.kind;
       const isOnAdmin = nextUrl.pathname.startsWith("/admin");
       const isOnLogin = nextUrl.pathname.startsWith("/admin/login");
 
       if (isOnLogin) return true;
-      if (isOnAdmin) return isLoggedIn;
+      // /admin exige sessão de admin (um expositor logado não entra aqui).
+      // O portal /painel é protegido no server component via requireExhibitor().
+      if (isOnAdmin) return kind === "admin";
       return true;
     },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = (user as { role?: string }).role;
+        token.kind = (user as { kind?: string }).kind;
+        token.exhibitorId = (user as { exhibitorId?: string }).exhibitorId;
       }
       return token;
     },
@@ -29,6 +33,9 @@ export const authConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
+        (session.user as { kind?: string }).kind = token.kind as string;
+        (session.user as { exhibitorId?: string }).exhibitorId =
+          token.exhibitorId as string | undefined;
       }
       return session;
     },

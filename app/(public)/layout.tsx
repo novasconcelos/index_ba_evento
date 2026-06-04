@@ -1,13 +1,17 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { CartProvider } from "@/components/cart/cart-context";
 import { CartBadge } from "@/components/cart/cart-badge";
 import { IndexWordmark } from "@/components/brand/index-logo";
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+  const isExhibitor = session?.user?.kind === "exhibitor";
+
   return (
     <CartProvider>
       <header className="sticky top-0 z-30 bg-brand-navy text-white">
@@ -18,6 +22,12 @@ export default function PublicLayout({
           <nav className="flex items-center gap-5 text-sm font-medium">
             <Link href="/mapa" className="hidden hover:text-brand-lime sm:inline">
               Mapa
+            </Link>
+            <Link
+              href={isExhibitor ? "/painel" : "/entrar"}
+              className="hover:text-brand-lime"
+            >
+              {isExhibitor ? "Minha conta" : "Entrar"}
             </Link>
             <CartBadge />
             <Link

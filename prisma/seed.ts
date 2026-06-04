@@ -131,6 +131,7 @@ async function main() {
   await prisma.technicalResponsible.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
+  await prisma.lead.deleteMany();
   await prisma.magicLinkToken.deleteMany();
   await prisma.goal.deleteMany();
   await prisma.stand.deleteMany();
@@ -141,6 +142,7 @@ async function main() {
 
   console.log("Criando usuário admin...");
   const passwordHash = await bcrypt.hash("admin123", 10);
+  const exhibitorPasswordHash = await bcrypt.hash("expositor123", 10);
   await prisma.adminUser.create({
     data: {
       email: "admin@fieb.org.br",
@@ -196,7 +198,9 @@ async function main() {
     cursor += spec.standCount;
     if (picked.length === 0) continue;
 
-    const exhibitor = await prisma.exhibitor.create({ data: spec.exhibitor });
+    const exhibitor = await prisma.exhibitor.create({
+      data: { ...spec.exhibitor, passwordHash: exhibitorPasswordHash },
+    });
     const totalCents = picked.reduce((acc, s) => acc + s.priceCents, 0);
     const standStatus = standStatusForOrder(spec.status);
 
@@ -270,6 +274,33 @@ async function main() {
         title: "Stands vendidos",
         metric: "STANDS_SOLD",
         targetValue: 40,
+      },
+    ],
+  });
+
+  console.log("Criando leads de exemplo...");
+  await prisma.lead.createMany({
+    data: [
+      {
+        eventId: event.id,
+        email: "contato@laticiniosbahia.com.br",
+        whatsapp: "71 99999-1234",
+        standCode: "H5",
+        status: "NEW",
+      },
+      {
+        eventId: event.id,
+        email: "comercial@techfoods.com.br",
+        whatsapp: "71 98888-4321",
+        standCode: "G2",
+        status: "NEW",
+      },
+      {
+        eventId: event.id,
+        email: "diretoria@cooperativaoeste.coop.br",
+        whatsapp: "77 97777-0000",
+        standCode: "O1",
+        status: "CONTACTED",
       },
     ],
   });

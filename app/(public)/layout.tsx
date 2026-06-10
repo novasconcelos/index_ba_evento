@@ -39,9 +39,7 @@ export default async function PublicLayout({
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
-        {children}
-      </main>
+      <main className="w-full flex-1 px-4 py-6 lg:px-6">{children}</main>
       <footer className="border-t border-gray-200 bg-white py-6 text-center text-xs text-gray-500">
         INDEX — O maior evento da indústria do Nordeste · Realização Sistema FIEB
         e SEBRAE

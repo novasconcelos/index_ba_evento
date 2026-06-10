@@ -4,17 +4,20 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { parseHotspot, type Hotspot } from "@/lib/hotspot";
 import { standStatusColor } from "@/lib/labels";
+import { StandBlock } from "@/components/map/stand-block";
+import { PavilionScene, VIEW_W, VIEW_H, slopeFor } from "@/lib/venue/index-pavilion";
+import { shelfPack, widthForSize, BLOCK_H } from "@/lib/venue/stand-scale";
 import type { StandStatus } from "@/lib/enums";
 
 interface EditorStand {
   id: string;
   code: string;
   status: string;
+  sector: string | null;
+  sizeM2: number;
   hotspot: string | null;
 }
 
-const DEFAULT_W = 0.04;
-const DEFAULT_H = 0.035;
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 
 type DragState = {
@@ -29,16 +32,18 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 5;
 const ZOOM_STEP = 0.5;
 
+// imageUrl null → fundo = cena vetorial do pavilhão (mesma visão do público).
 export function HotspotEditor({
   imageUrl,
   stands,
   saveAction,
 }: {
-  imageUrl: string;
+  imageUrl: string | null;
   stands: EditorStand[];
   saveAction: (formData: FormData) => void;
 }) {
-  const imgRef   = React.useRef<HTMLImageElement>(null);
+  const vector   = !imageUrl;
+  const baseRef  = React.useRef<HTMLImageElement | SVGSVGElement | null>(null);
   const wrapRef  = React.useRef<HTMLDivElement>(null);   // div escalada
   const vpRef    = React.useRef<HTMLDivElement>(null);   // viewport com overflow:hidden
   const dragRef  = React.useRef<DragState>(null);
@@ -61,16 +66,16 @@ export function HotspotEditor({
   const [activeId, setActiveId] = React.useState<string>(stands[0]?.id ?? "");
   const placedCount = Object.keys(hotspots).length;
 
-  /* ── coordenada normalizada relativa à imagem ─────────────── */
+  /* ── coordenada normalizada relativa à base (imagem ou cena) ─ */
   const normFromClient = (clientX: number, clientY: number) => {
-    const img  = imgRef.current;
+    const base = baseRef.current;
     const wrap = wrapRef.current;
-    if (!img || !wrap) return { x: 0, y: 0 };
-    // posição do img no viewport escalado
-    const imgRect  = img.getBoundingClientRect();
+    if (!base || !wrap) return { x: 0, y: 0 };
+    // posição da base no viewport escalado
+    const baseRect = base.getBoundingClientRect();
     return {
-      x: clamp01((clientX - imgRect.left) / imgRect.width),
-      y: clamp01((clientY - imgRect.top)  / imgRect.height),
+      x: clamp01((clientX - baseRect.left) / baseRect.width),
+      y: clamp01((clientY - baseRect.top)  / baseRect.height),
     };
   };
 
@@ -127,10 +132,12 @@ export function HotspotEditor({
     if (target.dataset.box || target.dataset.handle) return;
     if (!activeId) return;
     const { x, y } = normFromClient(e.clientX, e.clientY);
+    const activeStand = stands.find((s) => s.id === activeId);
     setHotspots((prev) => {
       const ex = prev[activeId];
-      const w  = ex?.w ?? DEFAULT_W;
-      const h  = ex?.h ?? DEFAULT_H;
+      // Bloco novo nasce com largura proporcional aos m² (profundidade fixa).
+      const w  = ex?.w ?? widthForSize(activeStand?.sizeM2 ?? 9);
+      const h  = ex?.h ?? BLOCK_H;
       return { ...prev, [activeId]: { x: clamp01(x - w / 2), y: clamp01(y - h / 2), w, h } };
     });
     // auto-avança para o próximo stand ainda sem área (agiliza o cadastro)
@@ -177,43 +184,28 @@ export function HotspotEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId, hotspots]);
 
-  /* ── distribui em grade os stands ainda sem área ────────────── */
+  /* ── distribui em prateleiras os stands ainda sem área ──────── */
+  // Largura proporcional aos m² (mesma escala do mapa público).
   const autoDistribute = () => {
     const missing = stands.filter((s) => !hotspots[s.id]);
     if (missing.length === 0) return;
-    const cols = Math.ceil(Math.sqrt(missing.length));
-    const x0 = 0.08, x1 = 0.92, y0 = 0.15, y1 = 0.8;
-    const rows = Math.ceil(missing.length / cols);
-    const cellW = (x1 - x0) / cols;
-    const cellH = (y1 - y0) / rows;
-    const w = cellW * 0.7;
-    const h = cellH * 0.6;
-    const round = (n: number) => +n.toFixed(4);
-    setHotspots((prev) => {
-      const next = { ...prev };
-      missing.forEach((s, i) => {
-        const c = i % cols;
-        const r = Math.floor(i / cols);
-        next[s.id] = {
-          x: round(x0 + c * cellW + (cellW - w) / 2),
-          y: round(y0 + r * cellH + (cellH - h) / 2),
-          w: round(w),
-          h: round(h),
-        };
-      });
-      return next;
-    });
+    const region = { x0: 0.08, x1: 0.92, y0: 0.15, y1: 0.8, slope: 0 };
+    const packed = shelfPack(
+      missing.map((s) => ({ id: s.id, sizeM2: s.sizeM2 })),
+      region,
+    );
+    setHotspots((prev) => ({ ...prev, ...packed }));
   };
 
   /* ── arrastar hotspot / handle ──────────────────────────────── */
   const onPointerMoveHotspot = (e: React.PointerEvent) => {
     const drag = dragRef.current;
     if (!drag) return;
-    const img = imgRef.current;
-    if (!img) return;
-    const imgRect = img.getBoundingClientRect();
-    const dx = (e.clientX - drag.startX) / imgRect.width;
-    const dy = (e.clientY - drag.startY) / imgRect.height;
+    const base = baseRef.current;
+    if (!base) return;
+    const baseRect = base.getBoundingClientRect();
+    const dx = (e.clientX - drag.startX) / baseRect.width;
+    const dy = (e.clientY - drag.startY) / baseRect.height;
     if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) movedRef.current = true;
     setHotspots((prev) => {
       const o = drag.orig;
@@ -322,14 +314,42 @@ export function HotspotEditor({
               width: "100%",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              ref={imgRef}
-              src={imageUrl}
-              alt="Mapa do evento"
-              className="block w-full"
-              draggable={false}
-            />
+            {imageUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                ref={baseRef as React.RefObject<HTMLImageElement>}
+                src={imageUrl}
+                alt="Mapa do evento"
+                className="block w-full"
+                draggable={false}
+              />
+            ) : (
+              /* cena vetorial do pavilhão + blocos WYSIWYG (mesma visão do público) */
+              <svg
+                ref={baseRef as React.RefObject<SVGSVGElement>}
+                viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+                className="block w-full"
+              >
+                <PavilionScene />
+                {stands.map((s) => {
+                  const hs = hotspots[s.id];
+                  if (!hs) return null;
+                  return (
+                    <StandBlock
+                      key={s.id}
+                      code={s.code}
+                      status={s.status as StandStatus}
+                      x={hs.x * VIEW_W}
+                      y={hs.y * VIEW_H}
+                      w={hs.w * VIEW_W}
+                      h={hs.h * VIEW_H}
+                      slope={slopeFor(s.sector, hs.x + hs.w / 2)}
+                      focused={s.id === activeId}
+                    />
+                  );
+                })}
+              </svg>
+            )}
 
             {stands.map((s) => {
               const hs     = hotspots[s.id];
@@ -342,23 +362,40 @@ export function HotspotEditor({
                   data-box="1"
                   onPointerDown={(e) => startDrag(e, s.id, "move")}
                   className="absolute flex items-center justify-center"
-                  style={{
-                    left:   `${hs.x * 100}%`,
-                    top:    `${hs.y * 100}%`,
-                    width:  `${hs.w * 100}%`,
-                    height: `${hs.h * 100}%`,
-                    backgroundColor: `${color}55`,
-                    border:     active ? "2px solid #c6e84d" : `1.5px solid ${color}`,
-                    boxShadow:  active ? "0 0 0 2px #2d2a8c" : undefined,
-                    cursor: "move",
-                  }}
+                  style={
+                    vector
+                      ? {
+                          // camada de interação transparente sobre o bloco SVG
+                          left:   `${hs.x * 100}%`,
+                          top:    `${hs.y * 100}%`,
+                          width:  `${hs.w * 100}%`,
+                          height: `${hs.h * 100}%`,
+                          border: active
+                            ? "2px solid #c6e84d"
+                            : "1px dashed rgba(45,42,140,0.4)",
+                          boxShadow: active ? "0 0 0 2px #2d2a8c" : undefined,
+                          cursor: "move",
+                        }
+                      : {
+                          left:   `${hs.x * 100}%`,
+                          top:    `${hs.y * 100}%`,
+                          width:  `${hs.w * 100}%`,
+                          height: `${hs.h * 100}%`,
+                          backgroundColor: `${color}55`,
+                          border:     active ? "2px solid #c6e84d" : `1.5px solid ${color}`,
+                          boxShadow:  active ? "0 0 0 2px #2d2a8c" : undefined,
+                          cursor: "move",
+                        }
+                  }
                 >
-                  <span
-                    className="pointer-events-none select-none text-brand-navy font-bold"
-                    style={{ fontSize: `clamp(6px, ${hs.w * 60}vw, 11px)` }}
-                  >
-                    {s.code}
-                  </span>
+                  {!vector && (
+                    <span
+                      className="pointer-events-none select-none text-brand-navy font-bold"
+                      style={{ fontSize: `clamp(6px, ${hs.w * 60}vw, 11px)` }}
+                    >
+                      {s.code}
+                    </span>
+                  )}
                   {active && (
                     <span
                       data-handle="1"

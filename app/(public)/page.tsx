@@ -22,7 +22,7 @@ export default async function LandingPage() {
     : null;
 
   return (
-    <div className="space-y-12">
+    <div className="mx-auto w-full max-w-6xl space-y-12">
       {/* HERO */}
       <section className="bg-index-gradient relative overflow-hidden rounded-3xl p-8 sm:p-12">
         <IndexLogo

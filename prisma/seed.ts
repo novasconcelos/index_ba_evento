@@ -152,8 +152,8 @@ async function main() {
     },
   });
 
-  console.log("Criando evento e planta (SVG)...");
-  const { stands, svg } = buildSampleMap();
+  console.log("Criando evento (mapa vetorial embutido)...");
+  const stands = buildSampleMap();
   const event = await prisma.event.create({
     data: {
       name: "INDEX 2027",
@@ -161,8 +161,10 @@ async function main() {
       year: 2027,
       startDate: new Date("2027-05-05"),
       endDate: new Date("2027-05-07"),
-      mapSvg: svg,
-      mapImageUrl: "/mapa-index.jpg", // mapa 3D real em public/ (ver .gitignore)
+      // mapSvg/mapImageUrl nulos → o site usa a cena vetorial do pavilhão
+      // (lib/venue/index-pavilion.tsx).
+      mapSvg: null,
+      mapImageUrl: null,
       active: true,
     },
   });

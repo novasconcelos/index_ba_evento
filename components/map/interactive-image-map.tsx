@@ -3,6 +3,10 @@
 import * as React from "react";
 import { useCart, type CartItem } from "@/components/cart/cart-context";
 import { LeadCaptureModal, type LeadInfo } from "@/components/map/lead-capture-modal";
+import { StandBlock } from "@/components/map/stand-block";
+import { StandFlat } from "@/components/map/stand-flat";
+import { PavilionScene, POIS, VIEW_W, VIEW_H, slopeFor } from "@/lib/venue/index-pavilion";
+import { PavilionScene2D } from "@/lib/venue/index-pavilion-2d";
 import { formatBRL } from "@/lib/utils";
 import { standStatusLabel, standStatusColor } from "@/lib/labels";
 import { parseHotspot } from "@/lib/hotspot";
@@ -33,19 +37,24 @@ const statusBg: Record<StandStatus, string> = {
 };
 
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 4;
+const MAX_ZOOM = 5;
 const ZOOM_STEP = 0.5;
 const ALL = "__ALL__";
 
 /* ─── componente principal ────────────────────────────────────── */
+// imageUrl null → mapa vetorial embutido do pavilhão (nítido em qualquer zoom).
+// variant: "iso" = cena isométrica 2.5D (padrão); "flat" = planta baixa 2D top-down.
 export function InteractiveImageMap({
   imageUrl,
   stands,
+  variant = "iso",
 }: {
-  imageUrl: string;
+  imageUrl: string | null;
   stands: MapStand[];
+  variant?: "iso" | "flat";
 }) {
   const { items, has, toggle } = useCart();
+  const vector = !imageUrl;
 
   /* captura de lead (e-mail + WhatsApp) na 1ª seleção */
   const [leadInfo, setLeadInfo] = React.useState<LeadInfo | null>(null);
@@ -132,7 +141,7 @@ export function InteractiveImageMap({
 
   /* arrastar para mover */
   const onPointerDown = (e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest("button[data-stand]")) return;
+    if ((e.target as Element).closest?.("[data-stand]")) return;
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
     panStart.current = { mx: e.clientX, my: e.clientY, px: pan.x, py: pan.y };
   };
@@ -266,7 +275,17 @@ export function InteractiveImageMap({
           onPointerUp={onPointerUp}
           onPointerLeave={onPointerUp}
           className="relative select-none overflow-hidden"
-          style={{ height: 420, cursor: panStart.current ? "grabbing" : zoom > 1 ? "grab" : "default" }}
+          style={{
+            // Modo vetorial: altura proporcional à largura (a cena escala em 1600×760),
+            // para a planta caber inteira no zoom 1 em qualquer largura sem corte.
+            // minWidth:0 evita que o aspect-ratio implique uma min-width e estoure o
+            // layout em telas estreitas. Modo raster: altura fixa (proporção da imagem
+            // enviada é desconhecida).
+            ...(vector
+              ? { aspectRatio: `${VIEW_W} / ${VIEW_H}`, minWidth: 0 }
+              : { height: 520 }),
+            cursor: panStart.current ? "grabbing" : zoom > 1 ? "grab" : "default",
+          }}
         >
           <div
             style={{
@@ -276,38 +295,87 @@ export function InteractiveImageMap({
               width: "100%",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imageUrl} alt="Mapa do evento" className="block w-full" draggable={false} />
+            {imageUrl ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="Mapa do evento" className="block w-full" draggable={false} />
 
-            {/* hotspot overlays */}
-            {withHotspots.map(({ stand, hs }) => {
-              const sel = selectedIds.has(stand.id);
-              const isFocused = focused === stand.id;
-              const style = tintFor(stand.status, sel);
-              return (
-                <button
-                  key={stand.id}
-                  type="button"
-                  data-stand="1"
-                  onClick={() => select(stand)}
-                  onMouseEnter={() => setHovered(stand.id)}
-                  onMouseLeave={() => setHovered((h) => (h === stand.id ? null : h))}
-                  className="absolute rounded-sm transition-[filter] hover:brightness-110"
-                  style={{
-                    left:   `${hs.x * 100}%`,
-                    top:    `${hs.y * 100}%`,
-                    width:  `${hs.w * 100}%`,
-                    height: `${hs.h * 100}%`,
-                    backgroundColor: style.bg,
-                    border: `2px solid ${isFocused ? "#c6e84d" : style.border}`,
-                    boxShadow: isFocused ? "0 0 0 3px #2d2a8c" : undefined,
-                    cursor: stand.status === "AVAILABLE" ? "pointer" : "not-allowed",
-                  }}
-                  aria-label={`Stand ${stand.code} — ${standStatusLabel[stand.status]}`}
-                />
-              );
-            })}
+                {/* hotspot overlays */}
+                {withHotspots.map(({ stand, hs }) => {
+                  const sel = selectedIds.has(stand.id);
+                  const isFocused = focused === stand.id;
+                  const style = tintFor(stand.status, sel);
+                  return (
+                    <button
+                      key={stand.id}
+                      type="button"
+                      data-stand="1"
+                      onClick={() => select(stand)}
+                      onMouseEnter={() => setHovered(stand.id)}
+                      onMouseLeave={() => setHovered((h) => (h === stand.id ? null : h))}
+                      className="absolute rounded-sm transition-[filter] hover:brightness-110"
+                      style={{
+                        left:   `${hs.x * 100}%`,
+                        top:    `${hs.y * 100}%`,
+                        width:  `${hs.w * 100}%`,
+                        height: `${hs.h * 100}%`,
+                        backgroundColor: style.bg,
+                        border: `2px solid ${isFocused ? "#c6e84d" : style.border}`,
+                        boxShadow: isFocused ? "0 0 0 3px #2d2a8c" : undefined,
+                        cursor: stand.status === "AVAILABLE" ? "pointer" : "not-allowed",
+                      }}
+                      aria-label={`Stand ${stand.code} — ${standStatusLabel[stand.status]}`}
+                    />
+                  );
+                })}
+              </>
+            ) : (
+              /* mapa vetorial embutido do pavilhão (iso 2.5D ou planta 2D) */
+              <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} className="block w-full">
+                {variant === "flat" ? <PavilionScene2D /> : <PavilionScene />}
+                {withHotspots.map(({ stand, hs }) => {
+                  const common = {
+                    code: stand.code,
+                    status: stand.status,
+                    x: hs.x * VIEW_W,
+                    y: hs.y * VIEW_H,
+                    w: hs.w * VIEW_W,
+                    h: hs.h * VIEW_H,
+                    selected: selectedIds.has(stand.id),
+                    focused: focused === stand.id,
+                    onClick: () => select(stand),
+                    onMouseEnter: () => setHovered(stand.id),
+                    onMouseLeave: () =>
+                      setHovered((h) => (h === stand.id ? null : h)),
+                  };
+                  return variant === "flat" ? (
+                    <StandFlat key={stand.id} {...common} />
+                  ) : (
+                    <StandBlock
+                      key={stand.id}
+                      {...common}
+                      slope={slopeFor(stand.sector, hs.x + hs.w / 2)}
+                    />
+                  );
+                })}
+              </svg>
+            )}
           </div>
+
+          {/* legenda compacta (overlay) no modo vetorial */}
+          {vector && (
+            <div className="pointer-events-none absolute bottom-2 left-3 z-10 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-200/70 bg-white/85 px-2.5 py-1.5 backdrop-blur-sm">
+              {(Object.entries(standStatusLabel) as [StandStatus, string][]).map(([k, label]) => (
+                <span key={k} className="flex items-center gap-1 text-[11px] text-gray-700">
+                  <span
+                    className="inline-block h-2.5 w-2.5 rounded-sm"
+                    style={{ backgroundColor: standStatusColor[k] }}
+                  />
+                  {label}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* tooltip flutuante (fixo no viewport, não escala com zoom) */}
           {hoveredEntry && (
@@ -353,6 +421,23 @@ export function InteractiveImageMap({
           )}
         </div>
       </div>
+
+      {/* ── pontos de interesse (modo vetorial) ───────────────── */}
+      {vector && (
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <h2 className="mb-2 text-sm font-semibold text-brand-navy">Pontos de interesse</h2>
+          <div className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2 lg:grid-cols-3">
+            {POIS.map((p) => (
+              <span key={p.n} className="flex items-center gap-2 text-xs text-gray-700">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-800 text-[10px] font-bold text-white">
+                  {String(p.n).padStart(2, "0")}
+                </span>
+                {p.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── painel de áreas / stands (por ASA) ────────────────── */}
       <div className="rounded-xl border border-gray-200 bg-white p-4">

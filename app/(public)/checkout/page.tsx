@@ -62,7 +62,7 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
+      <div className="mx-auto w-full max-w-6xl rounded-xl border border-gray-200 bg-white p-8 text-center">
         {stalePruned ? (
           <>
             <p className="font-semibold text-gray-800">Os stands que você havia selecionado não estão mais disponíveis.</p>
@@ -116,7 +116,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_330px]">
+    <div className="mx-auto w-full max-w-6xl grid gap-6 lg:grid-cols-[1fr_330px]">
       <form onSubmit={onSubmit} className="space-y-6">
         <h1 className="text-2xl font-bold text-brand-navy">
           Cadastro do expositor

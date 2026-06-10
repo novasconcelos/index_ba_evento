@@ -1,15 +1,17 @@
 import { getActiveEvent } from "@/lib/event";
 import { prisma } from "@/lib/db";
-import { InteractiveMap, type MapStand } from "@/components/map/interactive-map";
+import type { MapStand } from "@/components/map/interactive-map";
 import { InteractiveImageMap } from "@/components/map/interactive-image-map";
-import { MapLegend } from "@/components/map/map-legend";
 import { MapViewSwitcher } from "@/components/map/map-view-switcher";
 import { CartSummary } from "@/components/cart/cart-summary";
 import type { StandStatus } from "@/lib/enums";
 
 export const dynamic = "force-dynamic";
 
-export default async function MapaPage() {
+// Protótipo de comparação: planta baixa 2D top-down (visão operacional para
+// alta densidade de stands). Ignora mapImageUrl/mapSvg de propósito — esta
+// página é exclusivamente a variante "flat" do mapa vetorial.
+export default async function Mapa2Page() {
   const event = await getActiveEvent();
 
   if (!event) {
@@ -47,25 +49,12 @@ export default async function MapaPage() {
           <div>
             <h1 className="text-2xl font-bold text-brand-navy">{event.name}</h1>
             <p className="text-sm text-gray-600">
-              Clique nos stands disponíveis (verdes) para montar sua reserva.
+              Planta 2D — visão operacional (protótipo de comparação).
             </p>
           </div>
-          <MapViewSwitcher active="iso" />
+          <MapViewSwitcher active="flat" />
         </div>
-        {event.mapImageUrl ? (
-          <>
-            <MapLegend />
-            <InteractiveImageMap imageUrl={event.mapImageUrl} stands={mapStands} />
-          </>
-        ) : event.mapSvg ? (
-          <>
-            <MapLegend />
-            <InteractiveMap svg={event.mapSvg} stands={mapStands} />
-          </>
-        ) : (
-          // Mapa vetorial embutido do pavilhão (legenda fica dentro do mapa).
-          <InteractiveImageMap imageUrl={null} stands={mapStands} />
-        )}
+        <InteractiveImageMap imageUrl={null} stands={mapStands} variant="flat" />
       </div>
       <CartSummary />
     </div>

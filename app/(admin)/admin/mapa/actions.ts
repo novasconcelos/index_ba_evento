@@ -26,6 +26,18 @@ export async function uploadMapImage(formData: FormData) {
   revalidatePath("/mapa");
 }
 
+// Remove a imagem personalizada e volta ao mapa vetorial embutido.
+export async function clearMapImage(formData: FormData) {
+  await requireAdmin();
+  const eventId = String(formData.get("eventId"));
+  await prisma.event.update({
+    where: { id: eventId },
+    data: { mapImageUrl: null },
+  });
+  revalidatePath("/admin/mapa");
+  revalidatePath("/mapa");
+}
+
 // Recebe um JSON { [standId]: {x,y,w,h} | null } e grava em cada stand.
 export async function saveHotspots(formData: FormData) {
   await requireAdmin();

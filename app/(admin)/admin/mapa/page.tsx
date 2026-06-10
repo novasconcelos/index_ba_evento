@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HotspotEditor } from "@/components/admin/hotspot-editor";
-import { updateEventSvg, updateStandShape, uploadMapImage, saveHotspots } from "./actions";
+import {
+  updateEventSvg,
+  updateStandShape,
+  uploadMapImage,
+  clearMapImage,
+  saveHotspots,
+} from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +35,8 @@ export default async function MapaEditorPage() {
     id: s.id,
     code: s.code,
     status: s.status,
+    sector: s.sector,
+    sizeM2: s.sizeM2,
     hotspot: s.hotspot,
   }));
 
@@ -36,67 +44,74 @@ export default async function MapaEditorPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-brand-navy">Editor do mapa</h1>
 
-      {/* ── IMAGEM + HOTSPOTS ────────────────────────────────────────── */}
+      {/* ── MAPA DO PAVILHÃO (vetorial ou imagem) + HOTSPOTS ─────────── */}
       <Card>
         <CardHeader>
-          <CardTitle>Mapa por imagem (hotspots)</CardTitle>
+          <CardTitle>
+            {event.mapImageUrl ? "Mapa por imagem (hotspots)" : "Mapa do pavilhão"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form action={uploadMapImage} className="flex flex-wrap items-end gap-3">
-            <input type="hidden" name="eventId" value={event.id} />
-            <div className="space-y-1">
-              <Label htmlFor="image">Imagem do mapa</Label>
-              <Input id="image" name="image" type="file" accept="image/*" className="w-64" />
-            </div>
-            <Button type="submit" variant="outline">
-              {event.mapImageUrl ? "Substituir imagem" : "Enviar imagem"}
-            </Button>
-            {event.mapImageUrl && (
-              <span className="text-xs text-green-600">
-                Imagem atual: <code className="text-gray-600">{event.mapImageUrl.split("/").pop()}</code>
-              </span>
-            )}
-          </form>
-
-          {event.mapImageUrl ? (
-            <HotspotEditor
-              imageUrl={event.mapImageUrl}
-              stands={editorStands}
-              saveAction={saveHotspots}
-            />
-          ) : (
-            <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center text-sm text-gray-500">
-              Envie uma imagem do mapa acima para começar a posicionar os stands.
+          {!event.mapImageUrl && (
+            <p className="text-sm text-gray-500">
+              Mapa vetorial do pavilhão — a mesma visão que o visitante vê no site.
+              Posicione os stands abaixo; tudo fica nítido em qualquer zoom.
             </p>
           )}
+          <HotspotEditor
+            imageUrl={event.mapImageUrl ?? null}
+            stands={editorStands}
+            saveAction={saveHotspots}
+          />
         </CardContent>
       </Card>
 
-      {/* ── SVG VETORIAL ─────────────────────────────────────────────── */}
+      {/* ── IMAGEM PERSONALIZADA (OPCIONAL) ──────────────────────────── */}
       <Card>
         <CardHeader>
-          <CardTitle>Pré-visualização da planta (SVG)</CardTitle>
+          <CardTitle>Imagem personalizada (opcional)</CardTitle>
         </CardHeader>
-        <CardContent>
-          {svg ? (
-            <div
-              className="max-h-[420px] overflow-auto rounded-lg border border-gray-200"
-              dangerouslySetInnerHTML={{ __html: svg }}
-            />
-          ) : (
-            <p className="text-sm text-gray-500">
-              Nenhuma planta SVG. Cole o código abaixo.
+        <CardContent className="space-y-3">
+          <p className="text-sm text-gray-500">
+            Se preferir usar uma arte própria (planta do designer, render 3D etc.),
+            envie a imagem — ela substitui o mapa vetorial no site e no editor acima.
+          </p>
+          <div className="flex flex-wrap items-end gap-3">
+            <form action={uploadMapImage} className="flex flex-wrap items-end gap-3">
+              <input type="hidden" name="eventId" value={event.id} />
+              <div className="space-y-1">
+                <Label htmlFor="image">Imagem do mapa</Label>
+                <Input id="image" name="image" type="file" accept="image/*" className="w-64" />
+              </div>
+              <Button type="submit" variant="outline">
+                {event.mapImageUrl ? "Substituir imagem" : "Enviar imagem"}
+              </Button>
+            </form>
+            {event.mapImageUrl && (
+              <form action={clearMapImage}>
+                <input type="hidden" name="eventId" value={event.id} />
+                <Button type="submit" variant="outline">
+                  Remover imagem e usar o mapa vetorial
+                </Button>
+              </form>
+            )}
+          </div>
+          {event.mapImageUrl && (
+            <p className="text-xs text-green-600">
+              Imagem atual:{" "}
+              <code className="text-gray-600">{event.mapImageUrl.split("/").pop()}</code>
             </p>
           )}
         </CardContent>
       </Card>
 
+      {/* ── AVANÇADO (LEGADO): SVG COLADO ───────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>SVG da planta</CardTitle>
+            <CardTitle>Avançado (legado) — SVG da planta</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <form action={updateEventSvg} className="space-y-3">
               <input type="hidden" name="eventId" value={event.id} />
               <Label htmlFor="mapSvg">
@@ -112,12 +127,18 @@ export default async function MapaEditorPage() {
               />
               <Button type="submit">Salvar planta</Button>
             </form>
+            {svg && (
+              <div
+                className="max-h-[300px] overflow-auto rounded-lg border border-gray-200"
+                dangerouslySetInnerHTML={{ __html: svg }}
+              />
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Vínculo forma ↔ stand</CardTitle>
+            <CardTitle>Vínculo forma ↔ stand (SVG legado)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="max-h-[420px] overflow-auto">

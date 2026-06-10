@@ -5,7 +5,8 @@
       "name": "fieb",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 3100
+      "port": 3100,
+      "autoPort": true
     },
     {
       "name": "proposta_in9.html",

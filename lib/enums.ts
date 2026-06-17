@@ -33,6 +33,15 @@ export type LeadStatus = "NEW" | "CONTACTED" | "CONVERTED";
 
 export const LEAD_STATUSES: LeadStatus[] = ["NEW", "CONTACTED", "CONVERTED"];
 
+// Status de uma versão do mapa (modelo MapVersion).
+export type MapVersionStatus = "DRAFT" | "ACTIVE" | "ARCHIVED";
+
+export const MAP_VERSION_STATUSES: MapVersionStatus[] = [
+  "DRAFT",
+  "ACTIVE",
+  "ARCHIVED",
+];
+
 // Listas cadastráveis pelo admin (modelo StandOption).
 export type StandOptionKind = "TIPO" | "ASA" | "LOCALIZACAO";
 

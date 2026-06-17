@@ -134,6 +134,7 @@ async function main() {
   await prisma.lead.deleteMany();
   await prisma.magicLinkToken.deleteMany();
   await prisma.goal.deleteMany();
+  await prisma.mapVersion.deleteMany();
   await prisma.stand.deleteMany();
   await prisma.standOption.deleteMany();
   await prisma.exhibitor.deleteMany();

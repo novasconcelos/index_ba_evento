@@ -32,9 +32,10 @@ model Event {
   mapSvg      String? // markup SVG da planta do evento (modo vetorial)
   mapImageUrl String? // imagem de fundo do mapa (modo imagem + hotspots)
   active      Boolean   @default(true)
-  stands    Stand[]
-  orders    Order[]
-  goals     Goal[]
+  stands      Stand[]
+  orders      Order[]
+  goals       Goal[]
+  mapVersions MapVersion[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -58,6 +59,26 @@ model Stand {
   updatedAt     DateTime    @updatedAt
 
   @@unique([eventId, code])
+}
+
+// Versão do mapa: rascunho de novas posições (layout) que só vira o mapa
+// publicado na ativação. Stand.hotspot continua a fonte viva do site; a
+// ativação copia o layout para os stands AVAILABLE (os demais são protegidos).
+model MapVersion {
+  id               String    @id @default(cuid())
+  eventId          String
+  event            Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  label            String
+  notes            String?
+  status           String    @default("DRAFT") // DRAFT | ACTIVE | ARCHIVED (ver lib/enums.ts)
+  layout           String // JSON { [standCode]: {x,y,w,h} | null }
+  activationReport String? // JSON { applied: string[], skipped: [{code,status}], missing: string[] }
+  createdAt        DateTime  @default(now())
+  activatedAt      DateTime?
+  archivedAt       DateTime?
+  updatedAt        DateTime  @updatedAt
+
+  @@index([eventId, status])
 }
 
 // Listas cadastráveis pelo admin (Tipo, ASA, Localização). O valor é gravado

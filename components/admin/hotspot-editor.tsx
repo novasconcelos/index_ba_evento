@@ -37,11 +37,19 @@ export function HotspotEditor({
   imageUrl,
   stands,
   saveAction,
+  hiddenFields = [],
+  protectedIds = [],
 }: {
   imageUrl: string | null;
   stands: EditorStand[];
   saveAction: (formData: FormData) => void;
+  // campos extras enviados no form de salvar (ex.: versionId no modo rascunho)
+  hiddenFields?: { name: string; value: string }[];
+  // stands protegidos (vendidos/reservados): editáveis no rascunho, mas serão
+  // mantidos na posição atual durante a ativação — só indicação visual aqui
+  protectedIds?: string[];
 }) {
+  const protectedSet = React.useMemo(() => new Set(protectedIds), [protectedIds]);
   const vector   = !imageUrl;
   const baseRef  = React.useRef<HTMLImageElement | SVGSVGElement | null>(null);
   const wrapRef  = React.useRef<HTMLDivElement>(null);   // div escalada
@@ -249,7 +257,7 @@ export function HotspotEditor({
         >
           {stands.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.code} {hotspots[s.id] ? "✓" : ""}
+              {s.code} {protectedSet.has(s.id) ? "🔒" : ""} {hotspots[s.id] ? "✓" : ""}
             </option>
           ))}
         </select>
@@ -280,6 +288,9 @@ export function HotspotEditor({
 
         <form action={saveAction} className="ml-auto">
           <input type="hidden" name="data" value={JSON.stringify(hotspots)} />
+          {hiddenFields.map((f) => (
+            <input key={f.name} type="hidden" name={f.name} value={f.value} />
+          ))}
           <Button type="submit" size="sm">Salvar posições</Button>
         </form>
       </div>
@@ -355,7 +366,13 @@ export function HotspotEditor({
               const hs     = hotspots[s.id];
               if (!hs) return null;
               const active = s.id === activeId;
+              const locked = protectedSet.has(s.id);
               const color  = standStatusColor[s.status as StandStatus] ?? "#64748b";
+              const idleBorder = locked
+                ? "2px dashed #dc2626"
+                : vector
+                  ? "1px dashed rgba(45,42,140,0.4)"
+                  : `1.5px solid ${color}`;
               return (
                 <div
                   key={s.id}
@@ -370,9 +387,7 @@ export function HotspotEditor({
                           top:    `${hs.y * 100}%`,
                           width:  `${hs.w * 100}%`,
                           height: `${hs.h * 100}%`,
-                          border: active
-                            ? "2px solid #c6e84d"
-                            : "1px dashed rgba(45,42,140,0.4)",
+                          border: active ? "2px solid #c6e84d" : idleBorder,
                           boxShadow: active ? "0 0 0 2px #2d2a8c" : undefined,
                           cursor: "move",
                         }
@@ -382,7 +397,7 @@ export function HotspotEditor({
                           width:  `${hs.w * 100}%`,
                           height: `${hs.h * 100}%`,
                           backgroundColor: `${color}55`,
-                          border:     active ? "2px solid #c6e84d" : `1.5px solid ${color}`,
+                          border:     active ? "2px solid #c6e84d" : idleBorder,
                           boxShadow:  active ? "0 0 0 2px #2d2a8c" : undefined,
                           cursor: "move",
                         }

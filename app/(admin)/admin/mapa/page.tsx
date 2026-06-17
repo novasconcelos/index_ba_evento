@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HotspotEditor } from "@/components/admin/hotspot-editor";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import {
   updateEventSvg,
   updateStandShape,
@@ -12,8 +14,20 @@ import {
   clearMapImage,
   saveHotspots,
 } from "./actions";
+import { createDraftVersion } from "./version-actions";
 
 export const dynamic = "force-dynamic";
+
+const VERSION_LABEL: Record<string, string> = {
+  DRAFT: "Rascunho",
+  ACTIVE: "Ativa",
+  ARCHIVED: "Arquivada",
+};
+const VERSION_COLOR: Record<string, string> = {
+  DRAFT: "#d97706",
+  ACTIVE: "#16a34a",
+  ARCHIVED: "#64748b",
+};
 
 export default async function MapaEditorPage() {
   await requireAdmin();
@@ -24,6 +38,10 @@ export default async function MapaEditorPage() {
   const stands = await prisma.stand.findMany({
     where: { eventId: event.id },
     orderBy: { code: "asc" },
+  });
+  const versions = await prisma.mapVersion.findMany({
+    where: { eventId: event.id },
+    orderBy: { createdAt: "desc" },
   });
 
   // IDs de formas presentes no SVG (id="..." ou data-code="...").
@@ -36,7 +54,7 @@ export default async function MapaEditorPage() {
     code: s.code,
     status: s.status,
     sector: s.sector,
-    sizeM2: s.sizeM2,
+    sizeM2: s.sizeM2 ?? 9,
     hotspot: s.hotspot,
   }));
 
@@ -44,18 +62,91 @@ export default async function MapaEditorPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-brand-navy">Editor do mapa</h1>
 
+      {/* ── VERSÕES DO MAPA (rascunho → revisão → ativação) ──────────── */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Versões do mapa</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-gray-500">
+            Crie uma <strong>versão de análise</strong> para reposicionar stands sem
+            afetar o site. Ao ativar, a nova posição vale só para stands{" "}
+            <strong>disponíveis</strong> — vendidos, reservados, bloqueados e cedidos
+            mantêm a posição atual. A versão anterior fica guardada no histórico.
+          </p>
+          <form action={createDraftVersion} className="flex flex-wrap items-end gap-3">
+            <input type="hidden" name="eventId" value={event.id} />
+            <div className="space-y-1">
+              <Label htmlFor="version-label">Nome da versão</Label>
+              <Input
+                id="version-label"
+                name="label"
+                placeholder="Ex.: Reorganização ASA B"
+                className="w-64"
+              />
+            </div>
+            <Button type="submit" variant="outline">
+              Criar versão de análise
+            </Button>
+          </form>
+          {versions.length > 0 && (
+            <table className="w-full text-sm">
+              <thead className="text-left text-gray-500">
+                <tr>
+                  <th className="py-1">Versão</th>
+                  <th className="py-1">Status</th>
+                  <th className="py-1">Criada</th>
+                  <th className="py-1">Ativada</th>
+                  <th className="py-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {versions.map((v) => (
+                  <tr key={v.id} className="border-t border-gray-100">
+                    <td className="py-2 font-medium">{v.label}</td>
+                    <td className="py-2">
+                      <Badge color={VERSION_COLOR[v.status]}>
+                        {VERSION_LABEL[v.status] ?? v.status}
+                      </Badge>
+                    </td>
+                    <td className="py-2 text-gray-500">
+                      {v.createdAt.toLocaleString("pt-BR")}
+                    </td>
+                    <td className="py-2 text-gray-500">
+                      {v.activatedAt ? v.activatedAt.toLocaleString("pt-BR") : "—"}
+                    </td>
+                    <td className="py-2 text-right">
+                      <Link
+                        href={`/admin/mapa/versoes/${v.id}`}
+                        className="text-brand-navy underline"
+                      >
+                        Abrir
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </CardContent>
+      </Card>
+
       {/* ── MAPA DO PAVILHÃO (vetorial ou imagem) + HOTSPOTS ─────────── */}
       <Card>
         <CardHeader>
           <CardTitle>
-            {event.mapImageUrl ? "Mapa por imagem (hotspots)" : "Mapa do pavilhão"}
+            {event.mapImageUrl
+              ? "Mapa por imagem (hotspots) — edição direta do mapa publicado"
+              : "Mapa do pavilhão — edição direta do mapa publicado"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!event.mapImageUrl && (
             <p className="text-sm text-gray-500">
               Mapa vetorial do pavilhão — a mesma visão que o visitante vê no site.
-              Posicione os stands abaixo; tudo fica nítido em qualquer zoom.
+              Posicione os stands abaixo; tudo fica nítido em qualquer zoom.{" "}
+              <strong>Alterações aqui vão direto ao site</strong> — para revisar antes,
+              use uma versão de análise acima.
             </p>
           )}
           <HotspotEditor
